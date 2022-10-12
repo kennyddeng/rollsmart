@@ -1,0 +1,69 @@
+\documentclass{article}
+\usepackage{minted}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{blindtext}
+\graphicspath{~/rollsmart/deliverables/proposal/}
+
+\title{SYSC 4907 Project Proposal : Smart Rollator}
+\date{}
+\author {Corbin Garlough - 101101493
+Kenny Deng - 101122713
+Isabelle Bryenton - 101077788
+Mark Johnson - 101110080
+Yunas Magsi - 10111515Project Objective}
+The Smart Rollator is a mobility aid that collects data about how a patient uses and moves with a rollator through multiple on-board sensors. A medical professional is able to monitor and adjust patient rehabilitation on a more continuous basis using collected data streamed to a cloud service for remote access.
+
+\subsection{Team Member Tasking}
+\autoref{fig:2} shows the distribution of the tasks for the project deliverables for each team member of group 33. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphiics{syc4907_team_member_tasking.png}
+    \caption{Team member Tasking for Project Deliverables}
+    \label{fig:2}
+\end{figure}
+
+
+\subsection{Justification of suitability}
+Our team is made of people from three different disciplines. Corbin, Kenny, and Yunas are Computer Systems Engineering students, Mark is a Software Engineering student, and Isabelle is a Biomedical and Electrical Engineering student. The computer systems degree is useful to this project because the degree focuses on the ability to integrate software and hardware together into a functional system. Since this project has multiple sensors, a cloud-based data storage system, and software to process data, the system integration skills learned in the computer systems degree will greatly assist in creating a final product. Software engineering focuses heavily on the methodological aspects of writing software, including requirements engineering, system design documentation, verification and validation, and software quality management; all of these are important aspects of engineering and delivering correct and complete software  systems.  Finally, a Biomedical and Electrical engineering degree will provide greater insight on the biomedical aspects of the project, given this is a medical device which utilizes multiple electrical sensors to acquire biomedical data, along with microprocessors to process and visualize the data.
+
+
+\subsection{Milestones}
+\begin{itemize}
+    \item Read data from sensors
+    \item Mount sensors and required hardware to rollator frame
+    \item  Export sensor data to cloud storage service
+    \item Generate a summary of data viewing
+    \item Have a patient usse the rollator to collect data about a short period of activity
+
+\section{Methodology}
+Group 33 is proposing the Smart Rollator project be implemented to meet the following requirements, using the microprocessors, sensors and power supplies along with cloud data storage and analysis detailed in the following subsections.
+
+\subsection{Requirements}
+\typebf{Functional Requirements} \n
+The functional requirements are the features that provide the data of the rollator usage. These include motion sensing, usage time tracking, heart rate monitoring, weight sense applicator, power capacity to last a full day, and storage of local data, along with cloud upload.
+Diving into motion sensing, the rollator must be able to track the speed at which the patient moves throughout the day, along with the distance traveled and average acceleration within it. The usage time is logged for the medical practitioner to see the frequency of use the patient is using the rollator, along with what position they are in, and whether they are seated, actively walking or stopped. The rollator will also include a Photoplethysmography-based (PPG) heart rate sensor, with which measurements will be taken from the patient throughout the day.
+In terms of rehabilitation for the patient, there are 3 weight sensors of the rollator, one for each arm handle and one for the seating. These weight sensors are used to see if the patient has a preference for a side along with whether they are using the rollator while seated. With all these components within the rollator, power consumption is a factor that needs to be accounted for. The goal of the rollator is to include at least one full day's use, before needing a charge to have no extra burden on the patient. Ideally, all the data that is collected is stored within the rollator for approximately 5 days before it needs to be pushed to the cloud, this is for consideration of patients that have internet connection issues
+
+\typebf{Non-Functional Requirements} \n
+The power consumption patterns of the Smart Rollator are expected to be similar to those of consumer cell phones, with battery drain during the day when in use and battery charging required at night while idle, allowing more inexpensive charging solutions to be considered without impacting daily use. The rollator will require wired charging to minimize the technical barrier to entry for using the rollator, and to maximize the ease of use of the system. The Smart Rollator sensor modules and wiring will also be designed to allow the rollator to remain visually indistinguishable from a standard rollator while still remaining modular for future development, with a design intended to be as unintrusive as possible for the patient; this is done to preserve the patient's dignity and not to bring unnecessary attention to them, as that may negatively impact the rehabilitation process by disincentivizing use of the rollator in public. The data analysis report will be designed for medical practitioners and will require patient-specific authentication to access. The report will be complete with regard to the collected data and will be simple to understand, allowing further work to be done on this aspect of the project in the future.
+
+\subsection{Microprocessor}
+The microprocessor chosen for the Smart Rollator is the Raspberry Pi 4. After extensive research on various microcontrollers and microprocessors. It became clear that the Raspberry Pi offers a substantial amount of GPIO pins, computational power, Wifi/Bluetooth connectivity, can be used for threading operations more simply, and many more features. The Pi offers the best performance and flexibility. Should there be wireless sensors used, the Pi is more than capable of handling the new task. The Pi has a built-in real-time clock , which a lot of other microprocessors do not offer built-in. The Raspberry Pi runs its own operating system which is Linux based, meaning we can use the device as a regular computer if desired. 
+
+\subsection{Sensors}
+\subsubsection{Heart Rate Sensor}
+To measure the heart-rate of users while they are using the rollator we require a heart rate sensor. We have opted for a wired sensor that will be mounted on the rollator.
+The sensor that we have chosen is PPG optical heart-rate sensor (red and IR LEDs) based. This sensor communicates using I2C. This sensor was chosen because of its low power consumption, small form factor (able to be mounted and placed on hand/finger), open-source heart rate and blood oxygen saturation level algorithm, and easy to connect terminals. PPG sensors are very reliable and accurate in determining heart rate. With a non-intrusive sensor there is minimal interference to the user (user places a hand over the sensor, not mounted to the user like a chest-mounted monitor and the user does not have to exert any additional effort to use the sensor). The flexibility is provided to us by the sensor in terms of mounting to the rollator (able to mount wherever the user has skin contact with the rollator). The sensor is readily available to ship at online vendor DigiKey.
+
+When your heart beats, capillaries contract and expand. These contractions and expansions alter the volume of blood in the capillaries. The PPG heart-rate sensor emits red and IR LED light to detect and calculate these changes in blood volume and translates these changes into a heart rate. One heart rate sensor will be mounted on each of the rollator’s handles and constantly monitor the user’s heart rate through measurements of the user’s fingers/hands. The heart-rate sensor will be physically wired to the microprocessor.
+
+\subsubsection{Momentum Sensor}
+\begin{figure}[!h]
+    \centering
+    \includegraphiics{nexus_rollator.png}
+    \caption{Nexus rollator}
+    \label{fig:1}
+\end{figure}
