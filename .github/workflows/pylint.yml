@@ -1,8 +1,8 @@
 name: Pylint
 
 on: 
-  push 
-  pull-request
+  push: 
+  pull-request:
 
 jobs:
   build:
