@@ -24,11 +24,11 @@ class Rollsmart:
         print("[deep_sky_blue1 bold]     _ _    ___     | |     | |     ___    _ __    __ _      _ _   | |_   ")
         print("[deep_sky_blue1 bold]    | '_|  / _ \    | |     | |    (_-<   | '  \  / _` |    | '_|  |  _|  ")
         print("[deep_sky_blue1 bold]   _|_|_   \___/   _|_|_   _|_|_   /__/_  |_|_|_| \__,_|   _|_|_   _\__|  ")
-        print('[dark_violet]    _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""| ')
-        print("[dark_violet]   "'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-')
+        print('[dark_violet] _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""| ')
+        print("[dark_violet] "'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-')
 
 
 
 
 if __name__ == '__main__':
-    fire.Fire(Rollsmart)
+    fire.Fire(Rollsmart())
