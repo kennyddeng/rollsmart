@@ -1,3 +1,10 @@
+########
+# Functions for adding data into Firebase Database
+# Nov.8 2022
+# Corbin G.
+########
+
+
 # import all used libraries
 import pyrebase
 
