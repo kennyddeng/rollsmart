@@ -8,6 +8,7 @@ import fire
 from rich import print
 from rich.traceback import install; install()
 
+import bno055
 
 class Rollsmart:
     def __init__(self):
@@ -15,6 +16,15 @@ class Rollsmart:
         Currently only initialized the CLI text art :)
         """
         self.initialize_cli()
+        self.connect_sensors()
+
+    def connect_sensors(self):
+        """
+        Establishes connection with all of the sensors on RollSmart upon waking
+        """
+        self.IMU = BNO555()
+        self.HR =
+
 
     def initialize_cli(self):
         """
