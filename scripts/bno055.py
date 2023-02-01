@@ -56,18 +56,18 @@ class BNO055():
         """
         while True:
             query = self.query()
-            print("Time: {} degrees C".format(query[0])
-            print("Temperature: {} degrees C".format(query[1])
-            print("Accelerometer (m/s^2): {}".format(query[2]))
-            print("Magnetometer (microteslas): {}".format(query[3]))
-            print("Gyroscope (rad/sec): {}".format(queyr[4]))
-            print("Euler angle: {}".format(query[5]))
-            print("Quaternion: {}".format(query[6]))
-            print("Linear acceleration (m/s^2): {}".format(query[7]))
-            print("Gravity (m/s^2): {}".format(query[8]))
-            print()
+            #print("Time: {} degrees C".format(query[0])
+                  #print("Temperature: {} degrees C".format(query[1])
+            #print("Accelerometer (m/s^2): {}".format(query[2]))
+            #print("Magnetometer (microteslas): {}".format(query[3]))
+            #print("Gyroscope (rad/sec): {}".format(queyr[4]))
+            #print("Euler angle: {}".format(query[5]))
+            #print("Quaternion: {}".format(query[6]))
+            #print("Linear acceleration (m/s^2): {}".format(query[7]))
+            #print("Gravity (m/s^2): {}".format(query[8]))
+            #print()
 
-            time.sleep(measurement_freq)
+            #time.sleep(measurement_freq)
 
 if __name__ == '__main__':
     BNO055()

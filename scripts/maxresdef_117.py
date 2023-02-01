@@ -8,7 +8,7 @@ import os
 from time import sleep
 
 from rich import print
-from rich.traceback import
+from rich.traceback import install; install()
 
 class Max30105:
     """

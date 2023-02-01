@@ -8,8 +8,8 @@ import fire
 from rich import print
 from rich.traceback import install; install()
 
-import bno055
-import max30105
+#import bno055
+from maxresdef_117 import Max30105
 
 class Rollsmart:
     def __init__(self):
@@ -23,8 +23,8 @@ class Rollsmart:
         """
         Establishes connection with all of the sensors on RollSmart upon waking
         """
-        self.IMU = bno055()
-        self.HR = max30105()
+        #self.IMU = bno056()
+        self.HR = Max30105()
 
 
     def initialize_cli(self):
