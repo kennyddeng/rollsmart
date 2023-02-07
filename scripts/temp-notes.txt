@@ -1,0 +1,8 @@
+// hx711 load cell library
+https://github.com/tatobari/hx711py
+
+
+// load cell wiring
+https://www.amazon.ca/Half-bridge-Weight-Weighting-Amplifier-Bathroom/dp/B07B4DNJ2L
+
+// used digital gpio pin 24, 23 (DT, SCK) for hx711
