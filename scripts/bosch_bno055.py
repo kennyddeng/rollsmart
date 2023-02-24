@@ -1,8 +1,8 @@
 """
-Heart Rate
+IMU
 """
 
-class MaxResDef117():
+class BoschBNO055():
     def __init__(self):
         self.gpioChannelA = 1
 
