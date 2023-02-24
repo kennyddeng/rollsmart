@@ -1,0 +1,5 @@
+- enable custom polling rate for all sensors
+- configure processing of speed sensor (debouncing, speed, etc)
+- figure out offsets for load cell
+- finalize database schema
+- port bno055 and maxres modules from Izzy

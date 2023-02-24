@@ -89,7 +89,7 @@ class Rollsmart:
         Polls all sensors for current data and returns all values in a list.
 
             Returns: 
-                [speed, heartrate, imu, loadcell, strain]
+                (list): [speed, heartrate, imu, loadcell, strain]
         """
         self.poll_sensors()
         return [self.speed, self.heartrate, self.imu, self.loadcell, self.strain]
@@ -102,7 +102,7 @@ class Rollsmart:
 
     def push_sensor_data_to_database(self, data, time):
         """
-        Push all sensor data to firebase database.
+        Push all sensor data to Firebase database.
 
             Parameters:
                     data (list): A list of sensor data
