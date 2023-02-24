@@ -15,7 +15,7 @@ from daoki_bf350_3aa import DaokiBF3503AA
 class Rollsmart:
     def __init__(self):
         """
-        Initializes Rollsmart
+        Constructs all the necessary attributes for the Rollsmart object.
         """
         # set up global poll rate
         self.GlobalPollRate = 0.5
@@ -46,7 +46,14 @@ class Rollsmart:
 
     def connect_sensors(self):
         """
-        Establishes connection with all of the sensors on RollSmart upon waking
+        Initialize, set up, and connect all sensors.
+
+        Sensors connected: 
+            - Speed
+            - HeartRate
+            - IMU
+            - LoadCell
+            - Strain
         """
         self.Speed = Littelfuse59025020(self.SpeedGPIOA)
         self.HeartRate = MaxResDef117()
@@ -59,6 +66,16 @@ class Rollsmart:
         self.Strain = DaokiBF3503AA(self.StrainGPIOA, self.StrainAddress)
 
     def poll_sensors(self):
+        """
+        Polls all sensors for current processed sensor data and initializes as parameter variable.
+
+        Sensors polled: 
+            - Speed
+            - HeartRate
+            - IMU
+            - LoadCell
+            - Strain
+        """
         self.speed = self.Speed.get_processed_sensor_data()
         self.heartrate = self.HeartRate.get_processed_sensor_data()
         self.imu = self.IMU.get_processed_sensor_data()
@@ -68,13 +85,32 @@ class Rollsmart:
         self.strain = self.Strain.get_processed_sensor_data()
 
     def get_sensor_data(self):
+        """
+        Polls all sensors for current data and returns all values in a list.
+
+            Returns: 
+                [speed, heartrate, imu, loadcell, strain]
+        """
         self.poll_sensors()
         return [self.speed, self.heartrate, self.imu, self.loadcell, self.strain]
     
     def print_sensor_data(self, data):
+        """
+        Prints all current polled sensor data.
+        """
         print(data)
 
     def push_sensor_data_to_database(self, data, time):
+        """
+        Push all sensor data to firebase database.
+
+            Parameters:
+                    data (list): A list of sensor data
+                    time (str): Current time in String format
+
+            Returns:
+                    none
+        """
         data = self.get_sensor_data()
         self.db.child("collectedData").child("UUID").child("speed").child(time).set(data[0])
         self.db.child("collectedData").child("UUID").child("heartrate").child(time).set(data[1])
@@ -85,7 +121,7 @@ class Rollsmart:
 if __name__ == '__main__':
     rollsmart = Rollsmart()
     while True:
-        data = rollsmart.get_sensor_data() # [0-4] speed-strain
+        data = rollsmart.get_sensor_data()
         rollsmart.print_sensor_data(data)
         rollsmart.push_sensor_data_to_database(data, time.strftime("%H:%M:%S", time.localtime()))
         time.sleep(rollsmart.GlobalPollRate)
