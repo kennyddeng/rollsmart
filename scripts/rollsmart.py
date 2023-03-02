@@ -5,6 +5,7 @@ rollsmart.py is the main entry point script to interact with the rollsmart
 TO DO: Basically everything
 """
 import fire
+import urllib
 from rich import print
 from rich.traceback import install; install()
 
@@ -18,6 +19,7 @@ class Rollsmart:
         """
         self.initialize_cli()
         self.connect_sensors()
+        self.check_internet_connection()
 
     def connect_sensors(self):
         """
@@ -26,6 +28,16 @@ class Rollsmart:
         #self.IMU = bno056()
         self.HR = Max30105()
 
+    def check_internet_connection(self):
+        """
+        Determines if Raspberry Pi is conected to internet
+        """
+        try:
+            url = "https://www.google.com"
+            urlib.urlopen(url)
+            self.internet_connection = True
+        except:
+            self.internet_connection = False
 
     def initialize_cli(self):
         """
