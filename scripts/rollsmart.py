@@ -68,7 +68,6 @@ class Rollsmart:
         self.running = True
 
     def run_speed(self):
-        #self.Speed.dont_stop()
         while self.running:
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter,", self.SpeedCounter)
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor value", self.Speed.get_raw_sensor_data())
@@ -125,7 +124,7 @@ class Rollsmart:
             - LoadCell
             - Strain
         """
-        self.Speed = Littelfuse59025020(self.SpeedGPIOA, self.SpeedSamplesPerValue, self.WheelDiameter)
+        self.Speed = Littelfuse59025020(self.SpeedGPIOA)
         self.HeartRate = MaxRefDes117()
         self.IMU = BoschBNO055()
         self.LoadCell = NextionWI1802AX4WI0728(self.LoadCell_dout, self.LoadCell_sck)
