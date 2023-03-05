@@ -6,6 +6,7 @@ import time
 import pyrebase
 import dbconfig
 
+from datetime import datetime
 from threading import Thread
 from littelfuse59025020 import Littelfuse59025020
 from maxrefdes_117 import MaxRefDes117
@@ -82,31 +83,11 @@ class Rollsmart:
                 self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart) 
                 print("interval speed:", self.intervalSpeed)
                 # push speed to database
+                creationDate = datetime.today().strftime('%Y-%m-%d')
+                creationTime = datetime.today().strftime('%H:%M:%S')
+                self.db.child("collectedData").child("userLocalId").child("speed").child(creationDate).child(creationTime).set(self.intervalSpeed)
                 self.SpeedCounter = 0
             time.sleep(self.SpeedPollRate)
-                
-            """
-            #count = 0
-            for i in range(self.SpeedCounter):
-                #print("speed: ", self.Speed.get_processed_sensor_data())
-                if self.Speed.get_raw_sensor_data() == 1:
-                    if self.updateCounter == 0: # start timer
-                        self.timeStart = time.time()
-                        self.updateCounter += 1
-                    elif self.updateCounter == self.self.SpeedSamplesPerValue: # end timer
-                        self.timeEnd = time.time()
-                        self.updateCounter = 0
-                        self.intervalSpeed = (self.timeEnd - self.timeStart) / self.WheelDiameter
-                    else:
-                        self.updateCounter += 1
-                    count += 1
-                    time.sleep(self.SpeedDebounceTime) # debouncing time
-                else:
-                    time.sleep(self.SpeedDebounceTime) # debouncing time
-            # push data to database every for loop intervals
-            # self.push_blahblahblah
-            print("speed: ", self.Speed.intervalSpeed)
-            """
 
     def run_other(self):
         while self.running:
@@ -127,9 +108,7 @@ class Rollsmart:
             - LoadCell
             - Strain
         """
-        #self.Speed = Littelfuse59025020(self.SpeedGPIOA)
         self.Speed = Littelfuse59025020(self.SpeedGPIOA, self.SpeedSamplesPerValue, self.WheelDiameter)
-        #self.Speed = Reed(self.SpeedGPIOA)
         self.HeartRate = MaxRefDes117()
         self.IMU = BoschBNO055()
         self.LoadCell = NextionWI1802AX4WI0728(self.LoadCell_dout, self.LoadCell_sck)
@@ -193,14 +172,6 @@ class Rollsmart:
         self.db.child("collectedData").child("UUID").child("strain").child(time).set(data[4])
         
 if __name__ == '__main__':
-    """
-    rollsmart = Rollsmart()
-    while True:
-        data = rollsmart.get_sensor_data()
-        rollsmart.print_sensor_data(data)
-        rollsmart.push_sensor_data_to_database(data, time.strftime("%H:%M:%S", time.localtime()))
-        time.sleep(rollsmart.GlobalPollRate)
-    """
     speed = Rollsmart()
     speedThread = Thread(target=speed.run_speed)
     speedThread.start()
