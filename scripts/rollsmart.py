@@ -22,6 +22,9 @@ class Rollsmart:
         # set up global poll rate
         self.GlobalPollRate = 0.5
 
+        # Enable or disable console output logging
+        self.ConsoleLogging = True
+
         # set up sensor Pins and Addresses
         self.SpeedGPIOA = 17
         # self.HeartRateGPIO =
@@ -67,31 +70,45 @@ class Rollsmart:
     def run_speed(self):
         #self.Speed.dont_stop()
         while self.running:
-            print(self.SpeedCounter)
+            if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter,", self.SpeedCounter)
+            if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor value", self.Speed.get_raw_sensor_data())
             if self.Speed.get_raw_sensor_data() == 1:
-                print("detect")
                 if self.SpeedCounter == 0:
                     # start time begins now
                     self.timeStart = time.time()
-                    print("start time:", self.timeStart)
+                    if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect start time:", self.timeStart)
                 self.SpeedCounter += 1
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": incremented speed sensor detection counter", self.SpeedCounter)
             if self.SpeedCounter == self.SpeedSamplesPerValue:
                 # end time begins now
                 self.timeEnd = time.time()
-                print("end time:", self.timeEnd)
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect end time:", self.timeEnd)
                 # calc speed
                 self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart) 
-                print("interval speed:", self.intervalSpeed)
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.intervalSpeed)
                 # push speed to database
                 creationDate = datetime.today().strftime('%Y-%m-%d')
                 creationTime = datetime.today().strftime('%H:%M:%S')
                 self.db.child("collectedData").child("userLocalId").child("speed").child(creationDate).child(creationTime).set(self.intervalSpeed)
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": pushed speed sensor interval speed to database", self.intervalSpeed)
+                # reset counter to 0
                 self.SpeedCounter = 0
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.SpeedCounter)
             time.sleep(self.SpeedPollRate)
 
     def run_other(self):
         while self.running:
-            print("other: ", self.get_sensor_data())
+            otherSensorData = self.get_other_sensor_data()
+            if self.ConsoleLogging: print(datetime.now().isoformat(), ": other sensors values", otherSensorData)
+
+            # push speed to database
+            creationDate = datetime.today().strftime('%Y-%m-%d')
+            creationTime = datetime.today().strftime('%H:%M:%S')
+            self.db.child("collectedData").child("userLocalId").child("heartRate").child(creationDate).child(creationTime).set(otherSensorData[0])
+            self.db.child("collectedData").child("userLocalId").child("jerk").child(creationDate).child(creationTime).set(otherSensorData[1])
+            self.db.child("collectedData").child("userLocalId").child("seat").child(creationDate).child(creationTime).set(otherSensorData[2])
+            self.db.child("collectedData").child("userLocalId").child("weightDistribution").child(creationDate).child(creationTime).set(otherSensorData[3])
+            
             time.sleep(self.StrainPollRate)
 
     def terminate(self):
@@ -146,6 +163,16 @@ class Rollsmart:
         """
         self.poll_sensors()
         return [self.speed, self.heartrate, self.imu, self.loadcell, self.strain]
+
+    def get_other_sensor_data(self):
+        """
+        Polls all sensors other then speed for current data and returns all values in a list.
+
+            Returns: 
+                (list): [heartrate, imu, loadcell, strain]
+        """
+        self.poll_sensors()
+        return [self.heartrate, self.imu, self.loadcell, self.strain]
     
     def print_sensor_data(self, data):
         """
