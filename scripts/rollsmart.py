@@ -153,6 +153,23 @@ class Rollsmart:
         self.LoadCell.power_up()
         self.strain = self.Strain.get_processed_sensor_data()
 
+    def poll_other_sensors(self):
+        """
+        Polls other sensors for current processed sensor data and initializes as parameter variable.
+
+        Sensors polled: 
+            - HeartRate
+            - IMU
+            - LoadCell
+            - Strain
+        """
+        self.heartrate = self.HeartRate.get_processed_sensor_data()
+        self.imu = self.IMU.get_processed_sensor_data()
+        self.loadcell = self.LoadCell.get_weight(5)
+        self.LoadCell.power_down()
+        self.LoadCell.power_up()
+        self.strain = self.Strain.get_processed_sensor_data()
+
     def get_sensor_data(self):
         """
         Polls all sensors for current data and returns all values in a list.
@@ -170,7 +187,7 @@ class Rollsmart:
             Returns: 
                 (list): [heartrate, imu, loadcell, strain]
         """
-        self.poll_sensors()
+        self.poll_other_sensors()
         return [self.heartrate, self.imu, self.loadcell, self.strain]
     
     def print_sensor_data(self, data):
@@ -198,10 +215,12 @@ class Rollsmart:
         self.db.child("collectedData").child("UUID").child("strain").child(time).set(data[4])
         
 if __name__ == '__main__':
+    # speed thread
     speed = Rollsmart()
     speedThread = Thread(target=speed.run_speed)
     speedThread.start()
 
+    # other thread
     other = Rollsmart()
     otherThread = Thread(target=other.run_other)
     otherThread.start()
