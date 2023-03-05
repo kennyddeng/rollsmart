@@ -79,7 +79,7 @@ class Rollsmart:
                 self.timeEnd = time.time()
                 print("end time:", self.timeEnd)
                 # calc speed
-                self.intervalSpeed = (self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart) 
+                self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart) 
                 print("interval speed:", self.intervalSpeed)
                 # push speed to database
                 self.SpeedCounter = 0
