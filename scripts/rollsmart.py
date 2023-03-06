@@ -43,13 +43,13 @@ class Rollsmart:
         self.StrainPollRate = 5
 
         # speed debouncing time in seconds
-        self.SpeedDebounceTime = 0.5
+        self.SpeedDebounceTime = 0.3
 
         # speed number of samples per value
-        self.SpeedSamplesPerValue = 10
+        self.SpeedSamplesPerValue = 100
 
         # rollator wheel diameter in metres
-        self.WheelDiameter = 0.4
+        self.WheelDiameter = 0.2
 
         self.timeStart = 0
         self.timeEnd = 0
@@ -93,7 +93,7 @@ class Rollsmart:
                 # reset counter to 0
                 self.SpeedCounter = 0
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.SpeedCounter)
-            time.sleep(self.SpeedPollRate)
+            time.sleep(self.SpeedDebounceTime)
 
     def run_other(self):
         while self.running:
