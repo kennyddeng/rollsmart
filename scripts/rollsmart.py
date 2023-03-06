@@ -43,7 +43,7 @@ class Rollsmart:
         self.StrainPollRate = 5
 
         # speed debouncing time in seconds
-        self.SpeedDebounceTime = 0.3
+        self.SpeedDebounceTime = 0.226
 
         # speed number of samples per value
         self.SpeedSamplesPerValue = 100

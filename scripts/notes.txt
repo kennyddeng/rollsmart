@@ -1,0 +1,7 @@
+- wheel diameter is 20cm (0.2m)
+- testing debounce times
+- calc debounce time based on max speed
+    - max speed = 10 km/h ~= 2.77 m/s
+    - wheel circumference = pi * dia = 3.14 * 0.2 = 0.628 m
+    - max rev/s = max speed/wheel circumference = 2.77 m/s / 0.628 m ~= 4.41 rev/s
+    - therefore, debounce time should be 1 / max rev/s = 1 / 4.41 rev/s ~= 0.226 s 
