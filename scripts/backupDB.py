@@ -78,7 +78,7 @@ while True:
 	nowDate =  str(date.today())
 	nowTime = str(now.strftime("%H:%M:%S"))
 	
-	sensor_data = [('heartRate', random.randint(55,75), nowTime, nowDate),('speed', random.randint(0,10), nowTime, nowDate)]
+	sensor_data = [('heartRate', random.randint(55,75), nowTime, nowDate)]
 	uploadData(sensor_data)
 	time.sleep(5)
 	
