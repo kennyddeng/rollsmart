@@ -12,9 +12,7 @@ from FBdataAdding import *
 #Enter the UID of the rollator user here
 UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
 
-# Initializing SQLite connection
-sqlite_conn = sqlite3.connect('localDB.db')
-sqlite_cursor = sqlite_conn.cursor()
+
 
 # Define a function to send data to the Firebase database
 def send_to_firebase(data):
@@ -40,7 +38,10 @@ def send_to_sqlite(data):
 	print("To SQLite-> senName: "+str(senName)+", val:"+str(val)+", date: "+str(date)+", time: " + str(time))
 
 def uploadData(sensor_data):
-	
+	# Initializing SQLite connection
+	sqlite_conn = sqlite3.connect('localDB.db')
+	sqlite_cursor = sqlite_conn.cursor()
+
 	# Check internet connection
 	internet_status = True
 	try:

@@ -5,6 +5,7 @@ roll smart :)
 import time
 import pyrebase
 import dbconfig
+import backupDB
 
 from datetime import datetime
 from threading import Thread
@@ -13,7 +14,7 @@ from maxrefdes_117 import MaxRefDes117
 from bosch_bno055 import BoschBNO055
 from nextion_wi1802ax4_wi0728 import NextionWI1802AX4WI0728
 from daoki_bf350_3aa import DaokiBF3503AA
-from backupDB import *
+#from backupDB import *
 
 class Rollsmart:
     def __init__(self):
@@ -220,9 +221,9 @@ class Rollsmart:
             Returns:
                     none
         """
-	
-	sensor_data = [(datatype, val, time, date)]
-	backupDB.uploadData(sensor_data)
+
+        sensor_data = [(datatype, val, time, date)]
+        backupDB.uploadData(sensor_data)
         #self.db.child(entry).child(uuid).child(datatype).child(date).child(time).set(val)
         
 if __name__ == '__main__':
