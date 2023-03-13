@@ -54,9 +54,27 @@ def addWeightDistData(name, date, time, side):
 	
 
 
-#def main():
+def main():
+	# Define the UID to search for
+	uid_to_find = "pbB9DkQHjqdAWmiGIdxK8XNVOLj1"
+
+	# Get a reference to the loginInfo directory
+	login_info_ref = db.child("loginInfo")
+
+	# Get all the user profiles in the loginInfo directory
+	user_profiles = login_info_ref.get()
+
+	# Loop through each user profile to find the one with the matching UID
+	for user_profile in user_profiles.each():
+		# Get the UID field value for the current user profile
+		user_uid = user_profile.val().get("UID")
+		# Check if the UID matches the one we're searching for
+		if user_uid == uid_to_find:
+			# Return the user profile associated with the matching UID
+			print(user_profile.key(), user_profile.val())
+			break
 
 	
 
-#if __name__ == "__main__":
-#	main()
+if __name__ == "__main__":
+	main()
