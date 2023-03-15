@@ -26,7 +26,7 @@ def send_to_firebase(data):
 		addSeatData(UID, date, time, val)
 	elif (senName == "speed"):
 		addSpeedData(UID, date, time, val)
-	elif (senName == "weightDistributuion"):
+	elif (senName == "weightDistribution"):
 		addWeightDistData(UID, date, time, val)
 	return True
 
