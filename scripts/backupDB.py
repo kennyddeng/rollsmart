@@ -33,6 +33,9 @@ def send_to_firebase(data):
 # Define a function to send data to the local SQLite database
 def send_to_sqlite(data):
 	senName, val, time, date = data
+	# Initializing SQLite connection
+	sqlite_conn = sqlite3.connect('localDB.db')
+	sqlite_cursor = sqlite_conn.cursor()
 	sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date) VALUES (?, ?, ?, ?)", data)
 	sqlite_conn.commit()
 	print("To SQLite-> senName: "+str(senName)+", val:"+str(val)+", date: "+str(date)+", time: " + str(time))
