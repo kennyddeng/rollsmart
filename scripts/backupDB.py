@@ -34,7 +34,7 @@ def send_to_firebase(data):
 def send_to_sqlite(data):
 	senName, val, time, date = data
 	# Initializing SQLite connection
-	sqlite_conn = sqlite3.connect('localDB.db')
+	sqlite_conn = sqlite3.connect('/home/pi/Documents/rollsmart/scripts/localDB.db')
 	sqlite_cursor = sqlite_conn.cursor()
 	sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date) VALUES (?, ?, ?, ?)", data)
 	sqlite_conn.commit()
@@ -42,7 +42,7 @@ def send_to_sqlite(data):
 
 def uploadData(sensor_data):
 	# Initializing SQLite connection
-	sqlite_conn = sqlite3.connect('localDB.db')
+	sqlite_conn = sqlite3.connect('/home/pi/Documents/rollsmart/scripts/localDB.db')
 	sqlite_cursor = sqlite_conn.cursor()
 
 	# Check internet connection
