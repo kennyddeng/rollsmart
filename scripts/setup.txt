@@ -1,0 +1,10 @@
+Flash Raspbian OS to SD card
+
+open console:
+ping raspberrypi.local
+ssh pi@ip.address
+
+clone repo
+ensure correct file pathing for sqlite locaDB.db in backupDB.py
+navigate into ./scripts
+> python3 rollsmart.py
