@@ -25,7 +25,7 @@ class Rollsmart:
         self.ConsoleLogging = True
 
         # set up sensor Pins and Addresses
-        self.SpeedGPIOA = 17
+        self.SpeedGPIOA = 27
         # self.HeartRateGPIO =
         # self.IMUGPIO =
         self.LoadCell_dout = 23

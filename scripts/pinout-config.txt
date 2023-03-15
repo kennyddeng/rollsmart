@@ -5,7 +5,7 @@ physical pin - use
 5 - adc i2c scl
 6 - adc ground
 
-11 - reed signal
+13 - reed signal
 
 15 - hx711 data
 16 - hx711 serial clock
