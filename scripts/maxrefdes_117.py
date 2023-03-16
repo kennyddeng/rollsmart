@@ -12,8 +12,9 @@ import max30102
 import hrcalc
 
 class MaxRefDes117():
-    def __init__(self, gpioA):
-        self.gpioChannelA = gpioA
+    #def __init__(self, gpioA):
+    def __init__(self):
+        #self.gpioChannelA = gpioA
         self.hr = max30102.MAX30102()
 
     def get_raw_sensor_data(self):
