@@ -25,14 +25,14 @@ auth = firebase.auth()
 db = firebase.database()
 
 # define the names of tables used in Firebase database
-collectedData = "collectedData"
-loginInfo = "loginInfo"
-name = "name"
-hrData = "heartRate"
-jerkData = "jerk"
-seatData = "seat"
-speedData = "speed"
-weightDistData = "weightDistribution"
+COLLECTED_DATA = "collectedData"
+LOGIN_INFO = "loginInfo"
+NAME = "name"
+HR_DATA = "heartRate"
+JERK_DATA = "jerk"
+SEAT_DATA = "seat"
+SPEED_DATA = "speed"
+WEIGHT_DIST_DATA = "weightDistribution"
 
 def login():
     print("Log in...")
@@ -59,55 +59,54 @@ def signup():
         ask=input("Do you want to login?[y/n]")
         if ask=='y':
             login()
-    except: 
+    except:
         print("Email already exists")
     return
 
 def addUserDB():
-	firebase.database().ref("users/" + firebase.auth().currentUser.uid)
+    firebase.database().ref("users/" + firebase.auth().currentUser.uid)
 
 
-def addUserLogin(name, role, username, password):
-	db.child(loginInfo).child(name).child("role").set(role)
-	db.child(loginInfo).child(name).child("username").set(username)
-	db.child(loginInfo).child(name).child("password").set(password)
+def addUserLogin(NAME, role, username, password):
+    db.child(LOGIN_INFO).child(NAME).child("role").set(role)
+    db.child(LOGIN_INFO).child(NAME).child("username").set(username)
+    db.child(LOGIN_INFO).child(NAME).child("password").set(password)
 
-def newUDT(name):
-	db.child(collectedData).child(name)	
-      
-def addHRData(name, date, time, HR):
-	db.child(collectedData).child(name).child(hrData).child(date).child(time).set(HR)
-	
-def addJerkData(name, date, time, jerk):
-	db.child(collectedData).child(name).child(jerkData).child(date).child(time).set(jerk)
-	
-def addSeatData(name, date, time, seat):
-	db.child(collectedData).child(name).child(seatData).child(date).child(time).set(seat)
-	
-def addSpeedData(name, date, time, speed):
-	db.child(collectedData).child(name).child(speedData).child(date).child(time).set(speed)
-	
-def addWeightDistData(name, date, time, side):
-	db.child(collectedData).child(name).child(weightDistData).child(date).child(time).set(side)
-	
+def newUDT(NAME):
+    db.child(COLLECTED_DATA).child(NAME)
+
+def addHRData(NAME, date, time, HR):
+    db.child(COLLECTED_DATA).child(NAME).child(HR_DATA).child(date).child(time).set(HR)
+
+def addJerkData(NAME, date, time, jerk):
+    db.child(COLLECTED_DATA).child(NAME).child(JERK_DATA).child(date).child(time).set(jerk)
+
+def addSeatData(NAME, date, time, seat):
+    db.child(COLLECTED_DATA).child(NAME).child(SEAT_DATA).child(date).child(time).set(seat)
+
+def addSpeedData(NAME, date, time, speed):
+    db.child(COLLECTED_DATA).child(NAME).child(SPEED_DATA).child(date).child(time).set(speed)
+
+def addWeightDistData(NAME, date, time, side):
+    db.child(COLLECTED_DATA).child(NAME).child(WEIGHT_DIST_DATA).child(date).child(time).set(side)
+
 #Main
 
 #ans=input("Are you a new user?[y/n]")
 
 #if ans == 'n':
     #login()
-    
+
 #elif ans == 'y':
     #signup()
-    
-#newName = input("Enter new name: ")
+
+#newNAME = input("Enter new NAME: ")
 #newRole = input("Enter new role: ")
-#newUsername = input("Enter new username: ")
+#newUserNAME = input("Enter new userNAME: ")
 #newPassword = input("Enter new password: ")
-#addUserLogin(newName, newRole, newUsername, newPassword)
+#addUserLogin(newNAME, newRole, newUserNAME, newPassword)
 #def main():
 
-	
 
-#if __name__ == "__main__":
+#if __NAME__ == "__main__":
 #	main()

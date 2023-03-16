@@ -210,7 +210,7 @@ class Rollsmart:
 
 
             # print sensor data
-            if self.console_logging: 
+            if self.console_logging:
                 print(datetime.now().isoformat(), ": strain gauge left value", strain_left_val)
                 print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
 
@@ -238,7 +238,7 @@ class Rollsmart:
         """
 
         sensor_data = [(datatype, val, time, date)]
-        backupDB.uploadData(sensor_data)
+        backup_db.uploadData(sensor_data)
         #self.db.child(entry).child(uuid).child(datatype).child(date).child(time).set(val)
 
 if __name__ == '__main__':

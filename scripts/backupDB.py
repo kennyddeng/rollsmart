@@ -54,7 +54,6 @@ def uploadData(sensor_data):
 
 	# Send data to the appropriate database
 	if internet_status:
-        
 		if sqlite_cursor.execute("SELECT COUNT(*) FROM sensor_data").fetchone()[0] > 0:
 			data = sqlite_cursor.execute("SELECT * FROM sensor_data").fetchall()
 			print("===UPLOAD TO FB===")
@@ -68,10 +67,9 @@ def uploadData(sensor_data):
 	else:
 		for data in sensor_data:
 			send_to_sqlite(data)
-    
+
 # Continuously monitor the sensor data and send it to the appropriate database
 #while True:
-	
 	#now = datetime.now()
 	#nowDate =  str(date.today())
 	#nowTime = str(now.strftime("%H:%M:%S"))
@@ -79,7 +77,3 @@ def uploadData(sensor_data):
 	#sensor_data = [('heartRate', random.randint(55,75), nowTime, nowDate)]
 	#uploadData(sensor_data)
 	#ime.sleep(5)
-	
-
-
-
