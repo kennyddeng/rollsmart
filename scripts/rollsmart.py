@@ -28,12 +28,14 @@ class Rollsmart:
         # set up sensor Pins and Addresses
         self.SpeedGPIOA = 27
         self.HeartRateGPIO = 7
-        #self.IMUGPIO =
+        #self.IMUGPIO = 1
         self.LoadCell_dout = 23
         self.LoadCell_sck = 24
         self.LoadCellReferenceUnit = 100
-        self.StrainGPIOA = 1
-        self.StrainAddress = 0x48
+        self.StrainLeftGPIOA = 1
+        self.StrainLeftAddress = 0x48
+        self.StrainRightGPIOA = 1
+        self.StrainRightAddress = 0x69 # need to update with i2c address
 
         # set up sensor poll rates (seconds per poll)
         #self.SpeedDebounceTime = 0.226 # for max speed 10 km/h
@@ -175,15 +177,19 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            strain_val = self.Strain.get_processed_sensor_data()
+            strain_left_val = self.StrainLeft.get_processed_sensor_data()
+            strain_right_val = self.StrainRight.get_processed_sensor_data()
+
 
             # print sensor data
-            if self.ConsoleLogging: print(datetime.now().isoformat(), ": strain gauge value", strain_val)
+            if self.ConsoleLogging: 
+                print(datetime.now().isoformat(), ": strain gauge left value", strain_left_val)
+                print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
 
             # push to database
             creationDate = datetime.today().strftime('%Y-%m-%d')
             creationTime = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.Entry, self.UUID, "weightDistribution", creationDate, creationTime, strain_val)
+            self.push_sensor_data_to_database(self.Entry, self.UUID, "weightDistribution", creationDate, creationTime, [strain_left_val, strain_right_val])
 
             time.sleep(self.StrainPollRate)
 
@@ -212,7 +218,8 @@ class Rollsmart:
         self.LoadCell.set_reference_unit(self.LoadCellReferenceUnit)
         self.LoadCell.reset()
         self.LoadCell.tare()
-        self.Strain = DaokiBF3503AA(self.StrainGPIOA, self.StrainAddress)
+        self.StrainLeft = DaokiBF3503AA(self.StrainLeftGPIOA, self.StrainLeftAddress)
+        self.StrainRight = DaokiBF3503AA(self.StrainRightGPIOA, self.StrainRightAddress)
 
     def push_sensor_data_to_database(self, entry, uuid, datatype, date, time, val):
         """
