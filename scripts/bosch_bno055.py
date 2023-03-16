@@ -21,13 +21,14 @@ last_val = 0xFFFF
 
 
 
-
-
 class BoschBNO055():
     def __init__(self, gpioA):
         self.gpioChannelA = gpioA
-        self.i2c = board.I2C()
-        self.imu_sensor = adafruit_bno055.BNO055_I2C(self.i2c)
+        try:
+            self.i2c = board.I2C()
+            self.imu_sensor = adafruit_bno055.BNO055_I2C(self.i2c)
+        except Exception as e:
+            print(e)
 
     def temperature(self):
         global last_val  # pylint: disable=global-statement
