@@ -43,8 +43,8 @@ class Rollsmart:
         # set up sensor poll rates (seconds per poll)
         #self.speed_debounce_time = 0.226 # for max speed 10 km/h
         self.speed_debounce_time = 1
-        self.heart_rate_poll_rate = 1
-        self.imu_poll_rate = 1
+        self.heart_rate_poll_rate = 0.75
+        self.imu_poll_rate = 1.2
         self.load_poll_rate = 1
         self.strain_poll_rate = 1
 
