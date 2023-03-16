@@ -89,7 +89,8 @@ class Rollsmart:
             - strain_right
         """
         self.speed = Littelfuse59025020(self.speed_gpio_a)
-        self.heart_rate = MaxRefDes117(self.heart_rate_gpio)
+        #self.heart_rate = MaxRefDes117(self.heart_rate_gpio)
+        self.heart_rate = MaxRefDes117()
         self.imu = BoschBNO055(self.imu_gpio)
         self.load_cell = NextionWI1802AX4WI0728(self.load_cell_dout, self.load_cell_sck)
         self.load_cell.set_reading_format("MSB", "MSB")
