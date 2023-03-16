@@ -51,8 +51,8 @@ class BoschBNO055():
         linear_accel = self.imu_sensor.linear_acceleration
 
         return temperature, euler, gravity
-
-    def prin_processed_sensor_data(self):
+'''
+    def print_processed_sensor_data(self):
         # print processed sensor data
         while True:
             print("Temperature: {} degrees C".format(self.temperature())
@@ -66,4 +66,4 @@ class BoschBNO055():
             print()
 
             time.sleep(1)
-
+'''
