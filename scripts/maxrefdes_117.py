@@ -17,8 +17,8 @@ class MaxRefDes117():
         #self.gpioChannelA = gpioA
         try:
             self.hr = max30102.MAX30102()
-        except:
-            print(exception)
+        except Exception as e:
+            print(e)
 
 
     def get_raw_sensor_data(self):
