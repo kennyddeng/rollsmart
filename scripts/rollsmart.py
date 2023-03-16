@@ -26,7 +26,8 @@ class Rollsmart:
         self.console_logging = True
 
         # set up sensor Pins and Addresses
-        self.speed_gpio_a = 27
+        #self.speed_gpio_a = 27 # BCM
+        self.speed_gpio_a = 13 # BOARD
         self.heart_rate_gpio = 7
         self.imu_gpio = 1
         self.load_cell_dout = 23
