@@ -141,7 +141,7 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            red, ir = self.get_raw_sensor_data()
+            red, ir = self.HeartRate.get_raw_sensor_data()
             heartrate_val, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
 
             # print sensor data
