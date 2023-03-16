@@ -17,15 +17,13 @@ def main():
     """
     Send HR data to Firebase
     """
-    time_start = dt.today()
-    with open("hr_log.txt", "r") as f:
-        for line in f:
-            date = dt.today().strftime('%Y-%m-%d')
-            time_o = time_start + td(seconds=10)
-            time = time_o.strftime('%H:%M:%S')
-            hr, hr_valid, sp02, sp02_valid = MaxRefDes117.get_processed_sensor_data()
-            addHRData(UID, date, time, hr)
-            time_start = time_o
+    while True:
+        time_start = dt.today()
+        date = dt.today().strftime('%Y-%m-%d')
+        time_o = time_start + td(seconds=10)
+        time = time_o.strftime('%H:%M:%S')
+        hr, hr_valid, sp02, sp02_valid = MaxRefDes117.get_processed_sensor_data()
+        addHRData(UID, date, time, hr)
 
 if __name__ == '__main__':
     main()
