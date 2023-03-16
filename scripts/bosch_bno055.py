@@ -24,8 +24,8 @@ last_val = 0xFFFF
 
 
 class BoschBNO055():
-    def __init__(self):
-        self.gpioChannelA = 1
+    def __init__(self, gpioA):
+        self.gpioChannelA = gpioA
         self.i2c = board.I2C()
         self.imu_sensor = adafruit_bno055.BNO055_I2C(self.i2c)
 
@@ -40,15 +40,15 @@ class BoschBNO055():
         return result
 
     def get_processed_sensor_data(self):
-         # process raw sensor data into something useful to read
-         temperature = self.temperature()
-         acceleration = self.imu_sensor.acceleration
-         magnetic = self.imu_sensor.magnetic
-         gyro = self.imu_sensor.gyro
-         euler = self.imu_sensor.euler
-         quaternion = self.imu_sensor.quaternion
-         gravity = self.imu_sensor.gravity
-         linear_accel = self.imu_sensor.linear_acceleration
+        # process raw sensor data into something useful to read
+        temperature = self.temperature()
+        acceleration = self.imu_sensor.acceleration
+        magnetic = self.imu_sensor.magnetic
+        gyro = self.imu_sensor.gyro
+        euler = self.imu_sensor.euler
+        quaternion = self.imu_sensor.quaternion
+        gravity = self.imu_sensor.gravity
+        linear_accel = self.imu_sensor.linear_acceleration
 
         return temperature, euler, gravity
 

@@ -28,7 +28,7 @@ class Rollsmart:
         # set up sensor Pins and Addresses
         self.SpeedGPIOA = 27
         self.HeartRateGPIO = 7
-        #self.IMUGPIO = 1
+        self.IMUGPIO = 1
         self.LoadCell_dout = 23
         self.LoadCell_sck = 24
         self.LoadCellReferenceUnit = 100
@@ -212,7 +212,7 @@ class Rollsmart:
         """
         self.Speed = Littelfuse59025020(self.SpeedGPIOA)
         self.HeartRate = MaxRefDes117(self.HeartRateGPIO)
-        self.IMU = BoschBNO055()
+        self.IMU = BoschBNO055(self.IMUGPIO)
         self.LoadCell = NextionWI1802AX4WI0728(self.LoadCell_dout, self.LoadCell_sck)
         self.LoadCell.set_reading_format("MSB", "MSB")
         self.LoadCell.set_reference_unit(self.LoadCellReferenceUnit)
