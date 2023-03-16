@@ -14,8 +14,8 @@ import adafruit_bno055
 # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 #sensor = adafruit_bno055.BNO055_I2C(i2c)
 
-uart = board.UART()
-sensor = adafruit_bno055.BNO055_UART(uart)
+#uart = board.UART()
+#sensor = adafruit_bno055.BNO055_UART(uart)
 
 last_val = 0xFFFF
 
@@ -29,11 +29,11 @@ class BoschBNO055():
         self.i2c = board.I2C()
         self.imu_sensor = adafruit_bno055.BNO055_I2C(self.i2c)
 
-    def temperature():
+    def temperature(self):
         global last_val  # pylint: disable=global-statement
-        result = sensor.temperature
+        result = self.imu_sensor.temperature
         if abs(result - last_val) == 128:
-            result = sensor.temperature
+            result = self.imu_sensor.temperature
             if abs(result - last_val) == 128:
                 return 0b00111111 & result
         last_val = result
