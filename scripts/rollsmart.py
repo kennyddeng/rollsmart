@@ -35,8 +35,8 @@ class Rollsmart:
         self.load_cell_reference_value = 100
         self.strain_left_gpio_a = 1
         self.strain_left_address = 0x48
-        self.strain_right_gpio_a = 2
-        self.strain_right_address = 0x69 # need to update with i2c address
+        #self.strain_right_gpio_a = 2
+        #self.strain_right_address = 0x69 # need to update with i2c address
 
         # set up sensor poll rates (seconds per poll)
         #self.speed_debounce_time = 0.226 # for max speed 10 km/h
@@ -208,18 +208,19 @@ class Rollsmart:
         while self.running:
             # read sensor data
             strain_left_val = self.strain_left.get_processed_sensor_data()
-            strain_right_val = self.strain_right.get_processed_sensor_data()
+            #strain_right_val = self.strain_right.get_processed_sensor_data()
 
 
             # print sensor data
             if self.console_logging:
                 print(datetime.now().isoformat(), ": strain gauge left value", strain_left_val)
-                print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
+                #print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
 
             # push to database
             creation_date = datetime.today().strftime('%Y-%m-%d')
             creation_time = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "weightDistribution", creation_date, creation_time, [strain_left_val, strain_right_val])
+            #self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "weightDistribution", creation_date, creation_time, [strain_left_val, strain_right_val])
+            self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "weightDistribution", creation_date, creation_time, strain_left_val)
 
             time.sleep(self.strain_poll_rate)
 
