@@ -9,7 +9,7 @@ class Littelfuse59025020():
     def __init__(self, gpioA):
         self.gpioChannelA = gpioA
 
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpioChannelA, GPIO.IN)
 
     def get_raw_sensor_data(self):

@@ -26,8 +26,7 @@ class Rollsmart:
         self.console_logging = True
 
         # set up sensor Pins and Addresses
-        #self.speed_gpio_a = 27 # BCM
-        self.speed_gpio_a = 13 # BOARD
+        self.speed_gpio_a = 27 
         self.heart_rate_gpio = 7
         self.imu_gpio = 1
         self.load_cell_dout = 23
@@ -35,7 +34,7 @@ class Rollsmart:
         self.load_cell_reference_value = 100
         self.strain_left_gpio_a = 1
         self.strain_left_address = 0x48
-        self.strain_right_gpio_a = 1
+        self.strain_right_gpio_a = 2
         self.strain_right_address = 0x69 # need to update with i2c address
 
         # set up sensor poll rates (seconds per poll)
