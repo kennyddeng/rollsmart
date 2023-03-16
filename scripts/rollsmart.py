@@ -6,6 +6,7 @@ import time
 import pyrebase
 import dbconfig
 import backupDB
+import hrcalc
 
 from datetime import datetime
 from threading import Thread
@@ -92,7 +93,7 @@ class Rollsmart:
 
                 # calc speed
                 self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart)
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.intervalSpeed)
+                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.intervalSpeed, "m/s")
 
                 # push speed to database
                 creationDate = datetime.today().strftime('%Y-%m-%d')
@@ -111,7 +112,8 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            heartrate_val, hr_valid, sp02, sp02_valid = self.HeartRate.get_processed_sensor_data()
+            red, ir = self.get_raw_sensor_data()
+            heartrate_val, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
 
             # print sensor data
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": heart rate value", heartrate_val)
@@ -203,7 +205,7 @@ class Rollsmart:
             - Strain
         """
         self.Speed = Littelfuse59025020(self.SpeedGPIOA)
-        self.HeartRate = MaxRefDes117()
+        self.HeartRate = MaxRefDes117(self.HeartRateGPIO)
         self.IMU = BoschBNO055()
         self.LoadCell = NextionWI1802AX4WI0728(self.LoadCell_dout, self.LoadCell_sck)
         self.LoadCell.set_reading_format("MSB", "MSB")
