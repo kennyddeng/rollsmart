@@ -1,10 +1,14 @@
 # Firebase
 pip install pyrebase
 
-# SQLite 
+# SQLite
 sudo apt-get install sqlite3
 # sudo apt-get install sqlitebrowser # optional, if you want to visualize database
 
-# I2C 
+# I2C
 sudo apt-get install i2c-tools # should already be preinstalled on Raspberry Pis
 sudo apt-get install python3-smbus # should already be preinstalled on Raspberry Pis
+
+
+#Adafruit BNO055
+sudo pip3 install adafruit-circuitpython-bno055
