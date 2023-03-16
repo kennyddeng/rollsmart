@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 # -*-coding:utf-8-*-
 
 # this code is currently for python 2.7
+=======
+#!/usr/bin/env python
+"""
+MaxRefDes117 Sensor Script
+"""
+# -*-coding:utf-8-*-
+
+>>>>>>> 6f8363a (add hr source)
 from __future__ import print_function
 from time import sleep
 
@@ -48,8 +57,12 @@ MAX_BRIGHTNESS = 255
 class MAX30102():
     # by default, this assumes that physical pin 7 (GPIO 4) is used as interrupt
     # by default, this assumes that the device is at 0x57 on channel 1
+<<<<<<< HEAD
     # using gpio mode BCM, gpio pin 4 being used
     def __init__(self, channel=1, address=0x57, gpio_pin=4):
+=======
+    def __init__(self, channel=1, address=0x57, gpio_pin=7):
+>>>>>>> 6f8363a (add hr source)
         print("Channel: {0}, address: 0x{1:x}".format(channel, address))
         self.address = address
         self.channel = channel
@@ -57,8 +70,12 @@ class MAX30102():
         self.interrupt = gpio_pin
 
         # set gpio mode
+<<<<<<< HEAD
         #GPIO.setmode(GPIO.BOARD)
         GPIO.setmode(GPIO.BCM)
+=======
+        GPIO.setmode(GPIO.BOARD)
+>>>>>>> 6f8363a (add hr source)
         GPIO.setup(self.interrupt, GPIO.IN)
 
         self.reset()
@@ -162,3 +179,11 @@ class MAX30102():
             ir_buf.append(ir)
 
         return red_buf, ir_buf
+<<<<<<< HEAD
+=======
+
+if __name__ == '__main__':
+    main()
+
+
+>>>>>>> 6f8363a (add hr source)
