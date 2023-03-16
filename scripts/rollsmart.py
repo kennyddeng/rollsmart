@@ -26,8 +26,8 @@ class Rollsmart:
 
         # set up sensor Pins and Addresses
         self.SpeedGPIOA = 27
-        # self.HeartRateGPIO =
-        # self.IMUGPIO =
+        self.HeartRateGPIO = 7
+        #self.IMUGPIO =
         self.LoadCell_dout = 23
         self.LoadCell_sck = 24
         self.LoadCellReferenceUnit = 100
@@ -73,10 +73,10 @@ class Rollsmart:
         Speed sensor method.
         '''
         while self.running:
-            if self.ConsoleLogging: 
+            if self.ConsoleLogging:
                 print(datetime.now().isoformat(), ": speed sensor detection counter,", self.SpeedCounter)
                 print(datetime.now().isoformat(), ": speed sensor value", self.Speed.get_raw_sensor_data())
-            
+
             if self.Speed.get_raw_sensor_data() == 1:
                 if self.SpeedCounter == 0:
                     # start time begins now
@@ -84,22 +84,22 @@ class Rollsmart:
                     if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect start time:", self.timeStart)
                 self.SpeedCounter += 1
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": incremented speed sensor detection counter", self.SpeedCounter)
-            
+
             if self.SpeedCounter == self.SpeedSamplesPerValue:
                 # end time begins now
                 self.timeEnd = time.time()
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect end time:", self.timeEnd)
-                
+
                 # calc speed
-                self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart) 
+                self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart)
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.intervalSpeed)
-                
+
                 # push speed to database
                 creationDate = datetime.today().strftime('%Y-%m-%d')
                 creationTime = datetime.today().strftime('%H:%M:%S')
                 self.push_sensor_data_to_database(self.Entry, self.UUID, "speed", creationDate, creationTime, self.intervalSpeed)
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": pushed speed sensor interval speed to database", self.intervalSpeed)
-                
+
                 # reset counter to 0
                 self.SpeedCounter = 0
                 if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.SpeedCounter)
@@ -111,15 +111,21 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            heartrate_val = self.HeartRate.get_processed_sensor_data()
-            
+            heartrate_val, hr_valid, sp02, sp02_valid = self.HeartRate.get_processed_sensor_data()
+
             # print sensor data
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": heart rate value", heartrate_val)
-            
+
             # push to database
             creationDate = datetime.today().strftime('%Y-%m-%d')
             creationTime = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.Entry, self.UUID, "heartRate", creationDate, creationTime, heartrate_val)
+            if hr_valid:
+                self.push_sensor_data_to_database(self.Entry, self.UUID, "heartRate", creationDate, creationTime, heartrate_val)
+            else:
+                invalid_hr = f'{heartrate_val}:{hr_valid}'
+                self.push_sensor_data_to_database(self.Entry, self.UUID, "heartRate", creationDate, creationTime, heartrate_val)
+
+
 
             time.sleep(self.HeartRatePollRate)
 
@@ -133,12 +139,12 @@ class Rollsmart:
 
             # print sensor data
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": imu value", imu_val)
-            
+
             # push to database
             creationDate = datetime.today().strftime('%Y-%m-%d')
             creationTime = datetime.today().strftime('%H:%M:%S')
             self.push_sensor_data_to_database(self.Entry, self.UUID, "jerk", creationDate, creationTime, imu_val)
-            
+
             time.sleep(self.IMUPollRate)
 
     def run_load(self):
@@ -152,8 +158,8 @@ class Rollsmart:
             self.LoadCell.power_up()
 
             # print sensor data
-            if self.ConsoleLogging: print(datetime.now().isoformat(), ": loadcell value", loadcell_val) 
-            
+            if self.ConsoleLogging: print(datetime.now().isoformat(), ": loadcell value", loadcell_val)
+
             # push to database
             creationDate = datetime.today().strftime('%Y-%m-%d')
             creationTime = datetime.today().strftime('%H:%M:%S')
@@ -171,7 +177,7 @@ class Rollsmart:
 
             # print sensor data
             if self.ConsoleLogging: print(datetime.now().isoformat(), ": strain gauge value", strain_val)
-            
+
             # push to database
             creationDate = datetime.today().strftime('%Y-%m-%d')
             creationTime = datetime.today().strftime('%H:%M:%S')
@@ -189,7 +195,7 @@ class Rollsmart:
         """
         Initialize, set up, and connect all sensors.
 
-        Sensors connected: 
+        Sensors connected:
             - Speed
             - HeartRate
             - IMU
@@ -225,7 +231,7 @@ class Rollsmart:
         sensor_data = [(datatype, val, time, date)]
         backupDB.uploadData(sensor_data)
         #self.db.child(entry).child(uuid).child(datatype).child(date).child(time).set(val)
-        
+
 if __name__ == '__main__':
     '''
     Instantiate Rollsmart object and separate running threads for each of the sensors.
@@ -249,7 +255,7 @@ if __name__ == '__main__':
     load = Rollsmart()
     loadThread = Thread(target=load.run_load)
     loadThread.start()
- 
+
     # strain thread
     strain = Rollsmart()
     strainThread = Thread(target=strain.run_strain)
@@ -260,4 +266,4 @@ if __name__ == '__main__':
     #heartrate.terminate()
     #imu.terminate()
     #loadstrain.terminate()
-   
+
