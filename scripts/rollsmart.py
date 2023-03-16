@@ -23,39 +23,38 @@ class Rollsmart:
         Constructs all the necessary attributes for the Rollsmart object.
         """
         # Enable or disable console output logging
-        self.ConsoleLogging = True
+        self.console_logging = True
 
         # set up sensor Pins and Addresses
-        self.SpeedGPIOA = 27
-        self.HeartRateGPIO = 7
-        self.IMUGPIO = 1
-        self.LoadCell_dout = 23
-        self.LoadCell_sck = 24
-        self.LoadCellReferenceUnit = 100
-        self.StrainLeftGPIOA = 1
-        self.StrainLeftAddress = 0x48
-        self.StrainRightGPIOA = 1
-        self.StrainRightAddress = 0x69 # need to update with i2c address
+        self.speed_gpio_a = 27
+        self.heart_rate_gpio = 7
+        self.imu_gpio = 1
+        self.load_cell_dout = 23
+        self.load_cell_sck = 24
+        self.load_cell_reference_value = 100
+        self.strain_left_gpio_a = 1
+        self.strain_left_address = 0x48
+        self.strain_right_gpio_a = 1
+        self.strain_right_address = 0x69 # need to update with i2c address
 
         # set up sensor poll rates (seconds per poll)
-        #self.SpeedDebounceTime = 0.226 # for max speed 10 km/h
-        self.SpeedDebounceTime = 1
-        self.HeartRatePollRate = 1
-        self.IMUPollRate = 1
-        self.LoadPollRate = 1
-        self.StrainPollRate = 1
+        #self.speed_debounce_time = 0.226 # for max speed 10 km/h
+        self.speed_debounce_time = 1
+        self.heart_rate_poll_rate = 1
+        self.imu_poll_rate = 1
+        self.load_poll_rate = 1
+        self.strain_poll_rate = 1
 
         # speed number of samples per value pushed to database
-        self.SpeedSamplesPerValue = 100
+        self.speed_samples_per_value = 100
 
         # rollator wheel diameter in metres
-        self.WheelDiameter = 0.2
+        self.wheel_diameter = 0.2
 
-        self.timeStart = 0
-        self.timeEnd = 0
-        self.updateCounter = 0
-        self.intervalSpeed = 0
-        self.SpeedCounter = 0
+        self.speed_interval_time_start = 0
+        self.speed_interval_time_end = 0
+        self.speed_interval_speed = 0
+        self.speed_interval_counter = 0
 
         # connect sensors
         self.connect_sensors()
@@ -64,134 +63,12 @@ class Rollsmart:
         self.firebase = pyrebase.initialize_app(dbconfig.config)
         self.db = self.firebase.database()
 
-        # UPDATE WITH DB ENTRY AND UUID
-        self.Entry = "collectedData"
-        self.UUID = "userLocalId"
+        # db entry and uuid
+        self.db_entry = "collectedData"
+        self.db_uuid = "userLocalId"
 
         # threading
         self.running = True
-
-    def run_speed(self):
-        '''
-        Speed sensor method.
-        '''
-        while self.running:
-            if self.ConsoleLogging:
-                print(datetime.now().isoformat(), ": speed sensor detection counter,", self.SpeedCounter)
-                print(datetime.now().isoformat(), ": speed sensor value", self.Speed.get_raw_sensor_data())
-
-            if self.Speed.get_raw_sensor_data() == 1:
-                if self.SpeedCounter == 0:
-                    # start time begins now
-                    self.timeStart = time.time()
-                    if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect start time:", self.timeStart)
-                self.SpeedCounter += 1
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": incremented speed sensor detection counter", self.SpeedCounter)
-
-            if self.SpeedCounter == self.SpeedSamplesPerValue:
-                # end time begins now
-                self.timeEnd = time.time()
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detect end time:", self.timeEnd)
-
-                # calc speed
-                self.intervalSpeed = (3.14 * self.WheelDiameter * self.SpeedSamplesPerValue) / (self.timeEnd - self.timeStart)
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.intervalSpeed, "m/s")
-
-                # push speed to database
-                creationDate = datetime.today().strftime('%Y-%m-%d')
-                creationTime = datetime.today().strftime('%H:%M:%S')
-                self.push_sensor_data_to_database(self.Entry, self.UUID, "speed", creationDate, creationTime, self.intervalSpeed)
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": pushed speed sensor interval speed to database", self.intervalSpeed)
-
-                # reset counter to 0
-                self.SpeedCounter = 0
-                if self.ConsoleLogging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.SpeedCounter)
-            time.sleep(self.SpeedDebounceTime)
-
-    def run_heartrate(self):
-        '''
-        Heart rate sensor method.
-        '''
-        while self.running:
-            # read sensor data
-            red, ir = self.get_raw_sensor_data()
-            heartrate_val, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
-
-            # print sensor data
-            if self.ConsoleLogging: print(datetime.now().isoformat(), ": heart rate value", heartrate_val)
-
-            # push to database
-            creationDate = datetime.today().strftime('%Y-%m-%d')
-            creationTime = datetime.today().strftime('%H:%M:%S')
-            if hr_valid:
-                self.push_sensor_data_to_database(self.Entry, self.UUID, "heartRate", creationDate, creationTime, heartrate_val)
-            else:
-                invalid_hr = f'{heartrate_val}:{hr_valid}'
-                self.push_sensor_data_to_database(self.Entry, self.UUID, "heartRate", creationDate, creationTime, heartrate_val)
-
-
-
-            time.sleep(self.HeartRatePollRate)
-
-    def run_imu(self):
-        '''
-        IMU method.
-        '''
-        while self.running:
-            # read sensor data
-            imu_val = self.IMU.get_processed_sensor_data()
-
-            # print sensor data
-            if self.ConsoleLogging: print(datetime.now().isoformat(), ": imu value", imu_val)
-
-            # push to database
-            creationDate = datetime.today().strftime('%Y-%m-%d')
-            creationTime = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.Entry, self.UUID, "jerk", creationDate, creationTime, imu_val)
-
-            time.sleep(self.IMUPollRate)
-
-    def run_load(self):
-        '''
-        Load cell method.
-        '''
-        while self.running:
-            # read sensor data
-            loadcell_val = self.LoadCell.get_weight(5)
-            self.LoadCell.power_down()
-            self.LoadCell.power_up()
-
-            # print sensor data
-            if self.ConsoleLogging: print(datetime.now().isoformat(), ": loadcell value", loadcell_val)
-
-            # push to database
-            creationDate = datetime.today().strftime('%Y-%m-%d')
-            creationTime = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.Entry, self.UUID, "seat", creationDate, creationTime, loadcell_val)
-
-            time.sleep(self.LoadPollRate)
-
-    def run_strain(self):
-        '''
-        Strain gauge method.
-        '''
-        while self.running:
-            # read sensor data
-            strain_left_val = self.StrainLeft.get_processed_sensor_data()
-            strain_right_val = self.StrainRight.get_processed_sensor_data()
-
-
-            # print sensor data
-            if self.ConsoleLogging: 
-                print(datetime.now().isoformat(), ": strain gauge left value", strain_left_val)
-                print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
-
-            # push to database
-            creationDate = datetime.today().strftime('%Y-%m-%d')
-            creationTime = datetime.today().strftime('%H:%M:%S')
-            self.push_sensor_data_to_database(self.Entry, self.UUID, "weightDistribution", creationDate, creationTime, [strain_left_val, strain_right_val])
-
-            time.sleep(self.StrainPollRate)
 
     def terminate(self):
         '''
@@ -210,16 +87,138 @@ class Rollsmart:
             - LoadCell
             - Strain
         """
-        self.Speed = Littelfuse59025020(self.SpeedGPIOA)
-        self.HeartRate = MaxRefDes117(self.HeartRateGPIO)
-        self.IMU = BoschBNO055(self.IMUGPIO)
-        self.LoadCell = NextionWI1802AX4WI0728(self.LoadCell_dout, self.LoadCell_sck)
+        self.Speed = Littelfuse59025020(self.speed_gpio_a)
+        self.HeartRate = MaxRefDes117(self.heart_rate_gpio)
+        self.IMU = BoschBNO055(self.imu_gpio)
+        self.LoadCell = NextionWI1802AX4WI0728(self.load_cell_dout, self.load_cell_sck)
         self.LoadCell.set_reading_format("MSB", "MSB")
-        self.LoadCell.set_reference_unit(self.LoadCellReferenceUnit)
+        self.LoadCell.set_reference_unit(self.load_cell_reference_value)
         self.LoadCell.reset()
         self.LoadCell.tare()
-        self.StrainLeft = DaokiBF3503AA(self.StrainLeftGPIOA, self.StrainLeftAddress)
-        self.StrainRight = DaokiBF3503AA(self.StrainRightGPIOA, self.StrainRightAddress)
+        self.StrainLeft = DaokiBF3503AA(self.strain_left_gpio_a, self.strain_left_address)
+        self.StrainRight = DaokiBF3503AA(self.strain_right_gpio_a, self.strain_right_address)
+
+    def run_speed(self):
+        '''
+        Speed sensor method.
+        '''
+        while self.running:
+            if self.console_logging:
+                print(datetime.now().isoformat(), ": speed sensor detection counter,", self.speed_interval_counter)
+                print(datetime.now().isoformat(), ": speed sensor value", self.Speed.get_raw_sensor_data())
+
+            if self.Speed.get_raw_sensor_data() == 1:
+                if self.speed_interval_counter == 0:
+                    # start time begins now
+                    self.speed_interval_time_start = time.time()
+                    if self.console_logging: print(datetime.now().isoformat(), ": speed sensor detect start time:", self.speed_interval_time_start)
+                self.speed_interval_counter += 1
+                if self.console_logging: print(datetime.now().isoformat(), ": incremented speed sensor detection counter", self.speed_interval_counter)
+
+            if self.speed_interval_counter == self.speed_samples_per_value:
+                # end time begins now
+                self.speed_interval_time_end = time.time()
+                if self.console_logging: print(datetime.now().isoformat(), ": speed sensor detect end time:", self.speed_interval_time_end)
+
+                # calc speed
+                self.speed_interval_speed = (3.14 * self.wheel_diameter * self.speed_samples_per_value) / (self.speed_interval_time_end - self.speed_interval_time_start)
+                if self.console_logging: print(datetime.now().isoformat(), ": speed sensor interval speed:", self.speed_interval_speed, "m/s")
+
+                # push speed to database
+                creationDate = datetime.today().strftime('%Y-%m-%d')
+                creationTime = datetime.today().strftime('%H:%M:%S')
+                self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "speed", creationDate, creationTime, self.speed_interval_speed)
+                if self.console_logging: print(datetime.now().isoformat(), ": pushed speed sensor interval speed to database", self.speed_interval_speed)
+
+                # reset counter to 0
+                self.speed_interval_counter = 0
+                if self.console_logging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.speed_interval_counter)
+            time.sleep(self.speed_debounce_time)
+
+    def run_heartrate(self):
+        '''
+        Heart rate sensor method.
+        '''
+        while self.running:
+            # read sensor data
+            red, ir = self.get_raw_sensor_data()
+            heartrate_val, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
+
+            # print sensor data
+            if self.console_logging: print(datetime.now().isoformat(), ": heart rate value", heartrate_val)
+
+            # push to database
+            creationDate = datetime.today().strftime('%Y-%m-%d')
+            creationTime = datetime.today().strftime('%H:%M:%S')
+            if hr_valid:
+                self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "heartRate", creationDate, creationTime, heartrate_val)
+            else:
+                invalid_hr = f'{heartrate_val}:{hr_valid}'
+                self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "heartRate", creationDate, creationTime, heartrate_val)
+
+
+
+            time.sleep(self.heart_rate_poll_rate)
+
+    def run_imu(self):
+        '''
+        IMU method.
+        '''
+        while self.running:
+            # read sensor data
+            imu_val = self.IMU.get_processed_sensor_data()
+
+            # print sensor data
+            if self.console_logging: print(datetime.now().isoformat(), ": imu value", imu_val)
+
+            # push to database
+            creationDate = datetime.today().strftime('%Y-%m-%d')
+            creationTime = datetime.today().strftime('%H:%M:%S')
+            self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "jerk", creationDate, creationTime, imu_val)
+
+            time.sleep(self.imu_poll_rate)
+
+    def run_load(self):
+        '''
+        Load cell method.
+        '''
+        while self.running:
+            # read sensor data
+            loadcell_val = self.LoadCell.get_weight(5)
+            self.LoadCell.power_down()
+            self.LoadCell.power_up()
+
+            # print sensor data
+            if self.console_logging: print(datetime.now().isoformat(), ": loadcell value", loadcell_val)
+
+            # push to database
+            creationDate = datetime.today().strftime('%Y-%m-%d')
+            creationTime = datetime.today().strftime('%H:%M:%S')
+            self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "seat", creationDate, creationTime, loadcell_val)
+
+            time.sleep(self.load_poll_rate)
+
+    def run_strain(self):
+        '''
+        Strain gauge method.
+        '''
+        while self.running:
+            # read sensor data
+            strain_left_val = self.StrainLeft.get_processed_sensor_data()
+            strain_right_val = self.StrainRight.get_processed_sensor_data()
+
+
+            # print sensor data
+            if self.console_logging: 
+                print(datetime.now().isoformat(), ": strain gauge left value", strain_left_val)
+                print(datetime.now().isoformat(), ": strain gauge right value", strain_right_val)
+
+            # push to database
+            creationDate = datetime.today().strftime('%Y-%m-%d')
+            creationTime = datetime.today().strftime('%H:%M:%S')
+            self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "weightDistribution", creationDate, creationTime, [strain_left_val, strain_right_val])
+
+            time.sleep(self.strain_poll_rate)
 
     def push_sensor_data_to_database(self, entry, uuid, datatype, date, time, val):
         """
@@ -227,7 +226,7 @@ class Rollsmart:
 
             Parameters:
                     entry (str): Database entry type
-                    uuid (str): UUID of patient
+                    uuid (str): db_uuid of patient
                     datatype (str): Name of sensor data type
                     date (str): Calender date
                     time (str): Calender time
@@ -274,5 +273,5 @@ if __name__ == '__main__':
     #speed.terminate()
     #heartrate.terminate()
     #imu.terminate()
-    #loadstrain.terminate()
-
+    #load.terminate()
+    #strain.terminate()
