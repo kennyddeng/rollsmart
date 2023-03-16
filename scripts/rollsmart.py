@@ -99,7 +99,7 @@ class Rollsmart:
         self.load_cell.reset()
         self.load_cell.tare()
         self.strain_left = DaokiBF3503AA(self.strain_left_gpio_a, self.strain_left_address)
-        self.strain_right = DaokiBF3503AA(self.strain_right_gpio_a, self.strain_right_address)
+        #self.strain_right = DaokiBF3503AA(self.strain_right_gpio_a, self.strain_right_address)
 
     def run_speed(self):
         '''
