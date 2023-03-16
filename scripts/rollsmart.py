@@ -238,7 +238,7 @@ class Rollsmart:
         """
 
         sensor_data = [(datatype, val, time, date)]
-        backup_db.uploadData(sensor_data)
+        backupDB.uploadData(sensor_data)
         #self.db.child(entry).child(uuid).child(datatype).child(date).child(time).set(val)
 
 if __name__ == '__main__':
