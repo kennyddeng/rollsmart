@@ -29,6 +29,6 @@ class MaxRefDes117():
     def get_processed_sensor_data(self):
          # process raw sensor data into something useful to read
         while True:
-            red, ir = self.get_raw_sensor_data()
+            red, ir = self.hr.read_sequential()
             hr = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
         return hr
