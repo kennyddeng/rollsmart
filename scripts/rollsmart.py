@@ -29,7 +29,9 @@ class Rollsmart:
         # set up sensor Pins and Addresses
         self.speed_gpio_a = 27
         self.heart_rate_gpio = 7
+        self.heart_rate_i2c_address = 0x57
         self.imu_gpio = 1
+        self.imu_i2c_adress = 0x28
         self.load_cell_dout = 23
         self.load_cell_sck = 24
         self.load_cell_reference_value = 100
@@ -144,8 +146,7 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            red, ir = self.heart_rate.get_raw_sensor_data()
-            heart_rate_val, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
+            heart_rate_val, hr_valid, sp02, sp02_valid = self.heart_rate.get_processed_sensor_data()
 
             # print sensor data
             if self.console_logging: print(datetime.now().isoformat(), ": heart rate value", heart_rate_val)
@@ -279,3 +280,4 @@ if __name__ == '__main__':
     #imu.terminate()
     #load.terminate()
     #strain.terminate()
+
