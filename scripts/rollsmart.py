@@ -158,7 +158,8 @@ class Rollsmart:
                 self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "heart_rate", creation_date, creation_time, heart_rate_val)
             else:
                 invalid_hr = f'{heart_rate_val}:{hr_valid}'
-                self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "heart_rate", creation_date, creation_time, heart_rate_val)
+                self.push_sensor_data_to_database(self.db_entry, self.db_uuid, "heart_rate", creation_date, creation_time, invalid_hr)
+                if self.console_logging: print(datetime.now().isoformat(), ": heart rate value", invalid_hr)
 
 
 
