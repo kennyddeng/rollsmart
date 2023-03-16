@@ -15,7 +15,11 @@ class MaxRefDes117():
     #def __init__(self, gpioA):
     def __init__(self):
         #self.gpioChannelA = gpioA
-        self.hr = max30102.MAX30102()
+        try:
+            self.hr = max30102.MAX30102()
+        except:
+            print(exception)
+
 
     def get_raw_sensor_data(self):
         # read sensor data from pins
