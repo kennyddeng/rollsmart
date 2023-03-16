@@ -14,6 +14,7 @@ import hrcalc
 class MaxRefDes117():
     #def __init__(self, gpioA):
     def __init__(self):
+        print('Im innit')
         #self.gpioChannelA = gpioA
         try:
             self.hr = max30102.MAX30102()
@@ -28,7 +29,10 @@ class MaxRefDes117():
 
     def get_processed_sensor_data(self):
          # process raw sensor data into something useful to read
-        while True:
-            red, ir = self.hr.read_sequential()
-            hr = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
-        return hr
+        red, ir = self.hr.read_sequential()
+        hr, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
+        print(f'{hr}:{hr_valid}, {sp02}:{sp02_valid}')
+        return hr, hr_valid, sp02, sp02_valid
+
+if __name__ == '__main__':
+    MaxRefDes117()
