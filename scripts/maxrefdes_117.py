@@ -10,6 +10,7 @@ GND --> GND (pin9)
 """
 import max30102
 import hrcalc
+from datetime import datetime as dt
 
 class MaxRefDes117():
     #def __init__(self, gpioA):
