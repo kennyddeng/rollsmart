@@ -43,19 +43,19 @@ class MaxRefDes117():
         time_start = dt.today()
         UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
         with open("hr_log.txt", "r+") as f:
-            for line in f:
-                date = dt.today().strftime('%Y-%m-%d')
-                time = time_start.strftime('%H:%M:%S')
-                first_line = f.readline()  # Read the first line of the file
-                rest_of_lines = f.readlines()  # Read the rest of the lines in the file
+            date = dt.today().strftime('%Y-%m-%d')
+            time = time_start.strftime('%H:%M:%S')
+            first_line = f.readline()  # Read the first line of the file
+            rest_of_lines = f.readlines()  # Read the rest of the lines in the file
 
-                f.seek(0)  # Move the file pointer to the beginning of the file
-                f.truncate()  # Clear the file
+            f.seek(0)  # Move the file pointer to the beginning of the file
+            f.truncate()  # Clear the file
 
-                f.write(''.join(rest_of_lines))  # Write the rest of the lines to the file
-                f.write(first_line)
-                red, ir, hr, hr_valid, sp02, sp02_valid = first_line.split(',')
-                addHRData(UID, date, time, hr)
+            f.write(''.join(rest_of_lines))  # Write the rest of the lines to the file
+            f.write(first_line)
+            red, ir, hr, hr_valid, sp02, sp02_valid = first_line.split(',')
+            addHRData(UID, date, time, hr)
+        return hr, hr_valid, sp02, sp02_valid
 
 if __name__ == '__main__':
     MaxRefDes117()
