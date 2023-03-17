@@ -146,7 +146,7 @@ class Rollsmart:
         '''
         while self.running:
             # read sensor data
-            heart_rate_val, hr_valid, sp02, sp02_valid = self.heart_rate.get_processed_sensor_data()
+            heart_rate_val, hr_valid, sp02, sp02_valid = self.heart_rate.get_sensor_data()
 
             # print sensor data
             if self.console_logging: print(datetime.now().isoformat(), ": heart rate value", heart_rate_val)
