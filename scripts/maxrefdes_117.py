@@ -41,6 +41,7 @@ class MaxRefDes117():
     def get_sensor_data(self):
         #get sensor data from test file
         time_start = dt.today()
+        UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
         with open("hr_log.txt", "r+") as f:
             for line in f:
                 date = dt.today().strftime('%Y-%m-%d')
