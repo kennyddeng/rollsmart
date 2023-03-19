@@ -14,7 +14,6 @@ class Littelfuse59025020():
 
         self.speed_interval_time_start = 0
         self.speed_interval_time_end = 0
-        self.speed_interval_speed = 0
         self.speed_interval_counter = 0
 
         GPIO.setmode(GPIO.BCM)
@@ -37,19 +36,16 @@ class Littelfuse59025020():
             self.logger.log(f'incremented speed sensor counter: value = {speed_interval_counter}')
 
         if self.speed_interval_counter == self.speed_samples_per_value:
-            # end time begins now
+                # end time begins now
             self.speed_interval_time_end = time.time()
             self.logger.log(f'speed detection terminated @ {speed_interval_time_end}')
 
             # calc speed
-            self.speed_interval_speed = (3.14 * self.wheel_diameter * self.speed_samples_per_value) / (self.speed_interval_time_end - self.speed_interval_time_start)
-
-            # push speed to database
-            creation_date = datetime.today().strftime('%Y-%m-%d')
-            creation_time = datetime.today().strftime('%H:%M:%S')
-            if self.console_logging: print(datetime.now().isoformat(), ": pushed speed sensor interval speed to database", self.speed_interval_speed)
-
+            measurement_duration = self.speed_interval_time_start - self.speed_interval_time_end
+            measurement_interval_speed = (3.14 * self.wheel_diameter * self.speed_samples_per_value) / measurement_duration
             # reset counter to 0
             self.speed_interval_counter = 0
-            if self.console_logging: print(datetime.now().isoformat(), ": speed sensor detection counter reset,", self.speed_interval_counter)
-        time.sleep(self.speed_debounce_time)
+            self.logger.log('Speed sensor counter RESET')
+
+        return measurement_interval_speed
+
