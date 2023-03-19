@@ -57,9 +57,6 @@ class Rollsmart:
         self.load_poll_rate = 1
         self.strain_poll_rate = 1
 
-        # speed number of samples per value pushed to database
-        self.speed_samples_per_value = 100
-
         # rollator wheel diameter in metres
         self.wheel_diameter = 0.2
 

@@ -3,7 +3,10 @@ Reed Switch
 """
 import time
 
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    import FakeRPi.GPIO as GPIO
 
 class Littelfuse59025020():
     def __init__(self, gpioA, wheel_diameter, logger):
@@ -12,6 +15,8 @@ class Littelfuse59025020():
         self.logger = logger
 
 
+        # speed number of samples per value pushed to database
+        self.speed_samples_per_value = 100
         self.speed_interval_time_start = 0
         self.speed_interval_time_end = 0
         self.speed_interval_counter = 0
