@@ -54,7 +54,7 @@ class MaxRefDes117():
             f.write(''.join(rest_of_lines))  # Write the rest of the lines to the file
             f.write(first_line)
             red, ir, hr, hr_valid, sp02, sp02_valid = first_line.split(',')
-            addHRData(UID, date, time, hr)
+            #addHRData(UID, date, time, hr)
         return hr, hr_valid, sp02, sp02_valid
 
 if __name__ == '__main__':

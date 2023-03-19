@@ -12,7 +12,6 @@ from rich.logging import RichHandler
 from datetime import datetime as dt
 
 
-import backupDB
 import hrcalc
 from database import Database
 from littelfuse59025020 import Littelfuse59025020
