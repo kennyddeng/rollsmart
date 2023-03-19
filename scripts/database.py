@@ -60,6 +60,8 @@ class Database():
                         self.logger.info('DB: Local data backlog uploaded to Fyrebase')
                         self.sqlite_cursor.execute("DELETE FROM sensor_data")
                         self.sqlite_conn.commit()
+                        for d in data:
+                            self.db.child(USER_DATA).child(args[0]).child(data[0]).child(data[3]).child(args[2]).set(args[1])
 
                     self.db.child(USER_DATA).child(args[0]).child(sensor).child(args[1]).child(args[2]).set(args[3])
                 else:
@@ -75,7 +77,6 @@ class Database():
         self.sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date) VALUES (?, ?, ?, ?)", [sensor, value, time, date])
         self.sqlite_conn.commit()
         self.logger.info('SQLite: Data pushed to local storage')
-
 
     def check_internet_connection(self):
         """
