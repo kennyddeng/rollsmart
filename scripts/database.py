@@ -4,6 +4,7 @@ RollSmart Database Interface
 """
 import sqlite3
 import firebase
+import pyrebase
 from datetime import datetime as dt
 
 import dbconfig
@@ -75,9 +76,9 @@ class Database():
         """
         Check internet connection status
         """
-        internet_status = True
         try:
             requests.get('https://www.google.com')
+            internet_status = True
         except:
             internet_status = False
 
@@ -94,7 +95,6 @@ class Database():
             time: time of measurement ('%H:%M:%S')
             hr: heart rate value to push
         """
-        self.db.child(USER_DATA).child(uuid).child(HR_DATA).child(date).child(time).set(hr)
         self.logger.log("DB: Pushed HR data to database")
 
     @push_data(SP02_DATA)
@@ -122,7 +122,6 @@ class Database():
             time: time of measurement ('%H:%M:%S')
             imu_val: imu sensor values to push
         """
-        self.db.child(USER_DATA).child(uuid).child(JERK_DATA).child(date).child(time).set(imu_val)
         self.logger.log("DB: Pushed IMU jerk data to firebase")
 
     @push_data(SEAT_DATA)
@@ -136,7 +135,6 @@ class Database():
             time: time of measurement ('%H:%M:%S')
             seat: seat load cell sensor values to push
         """
-        self.db.child(USER_DATA).child(uuid).child(SEAT_DATA).child(date).child(time).set(seat)
         self.logger.log("DB: Pushed seat data to firebase")
 
     @push_data(SPEED_DATA)
@@ -165,7 +163,6 @@ class Database():
             time: time of measurement ('%H:%M:%S')
             seat: seat load cell sensor values to push
         """
-        self.db.child(USER_DATA).child(uuid).child(WEIGHT_DIST_DATA).child(date).child(time).set(side)
         self.logger.log("DB: Pushed strain gauge weight distribution data to firebase")
 
 
