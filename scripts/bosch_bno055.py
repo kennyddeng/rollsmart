@@ -22,8 +22,10 @@ last_val = 0xFFFF
 
 
 class BoschBNO055():
-    def __init__(self, gpioA):
+    def __init__(self, gpioA, logger):
         self.gpioChannelA = gpioA
+        self.logger = logger
+
         try:
             self.i2c = board.I2C()
             self.imu_sensor = adafruit_bno055.BNO055_I2C(self.i2c)
@@ -50,21 +52,19 @@ class BoschBNO055():
         quaternion = self.imu_sensor.quaternion
         gravity = self.imu_sensor.gravity
         linear_accel = self.imu_sensor.linear_acceleration
+        imu_val = [temperature, acceleration, magnetic, gyro, euler,
+                   quaternion, gravity,linear_acceleration]
 
-        return temperature, euler, gravity
-'''
-    def print_processed_sensor_data(self):
-        # print processed sensor data
-        while True:
-            print("Temperature: {} degrees C".format(self.temperature())
-            print("Accelerometer (m/s^2): {}".format(sensor.acceleration))
-            print("Magnetometer (microteslas): {}".format(sensor.magnetic))
-            print("Gyroscope (rad/sec): {}".format(sensor.gyro))
-            print("Euler angle: {}".format(sensor.euler))
-            print("Quaternion: {}".format(sensor.quaternion))
-            print("Linear acceleration (m/s^2): {}".format(sensor.linear_acceleration))
-            print("Gravity (m/s^2): {}".format(sensor.gravity))
-            print()
+        return imu_val
 
-            time.sleep(1)
-'''
+    def log_values(imu_val):
+        # log processed sensor data
+        self.logger.log(f"Temperature: {imu_val[0]} degrees C")
+        self.logger.log(f"Accelerometer (m/s^2): {imu_val[1]}")
+        self.logger.log(f"Magnetometer (microteslas): {imu_val[2]}")
+        self.logger.log(f"Gyroscope (rad/sec): {imu_val[3]}")
+        self.logger.log(f"Euler angle: {imu_val[4]}")
+        self.logger.log(f"Quaternion: {imu_val[5]}")
+        self.logger.log(f"Linear acceleration (m/s^2): {imu_val[6]}")
+        self.logger.log(f"Gravity (m/s^2): {imu_val[7]}")
+
