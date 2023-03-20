@@ -9,8 +9,16 @@ except ImportError:
     import FakeRPi.GPIO as GPIO
 
 class Littelfuse59025020():
-    def __init__(self, gpioA, wheel_diameter, logger):
-        self.gpioChannelA = gpioA
+    """
+    Class which interfaces with LittelFuse Reed switch speed sensor
+
+    Args:
+        gpio: gpio address on Raspberry Pi
+        wheel_diameter: diameter of rollator wheel for speed calculation
+        logger: logging object from top module
+    """
+    def __init__(self, gpio, wheel_diameter, logger):
+        self.gpio_channel_a = gpio
         self.wheel_diameter = wheel_diameter
         self.logger = logger
 
@@ -22,11 +30,14 @@ class Littelfuse59025020():
         self.speed_interval_counter = 0
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.gpioChannelA, GPIO.IN)
+        GPIO.setup(self.gpio_channel_a, GPIO.IN)
 
     def get_raw_sensor_data(self):
-        # read sensor data from pins
-        return GPIO.input(self.gpioChannelA)
+        """
+
+        read sensor data from pins
+        """
+        return GPIO.input(self.gpio_channel_a)
 
     def get_processed_sensor_data(self):
         """
@@ -52,5 +63,5 @@ class Littelfuse59025020():
             self.speed_interval_counter = 0
             self.logger.log('Speed sensor counter RESET')
 
-        return measurement_interval_speed
+        return measurement_interval_speed, self.speed_interval_counter
 

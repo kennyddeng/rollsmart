@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Test upload
+Test  HR data upload
 """
 import hrcalc
 import logging
@@ -11,7 +11,6 @@ from datetime import timedelta as td
 #from maxrefdes_117 import MaxRefDes117
 from database import Database
 
-UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
 
 
 def main():
@@ -36,10 +35,13 @@ def main():
         hr, hr_valid, sp02, sp02_valid = get_sensor_data()
         print(f' test {hr}:{hr_valid}')
         db.add_hr_data(UID, date, time, hr)
-        print(f'pushed {hr}:{hr_valid}')
 
 def get_sensor_data():
-    #get sensor data from test file
+    """
+    Test uploading HR sensor test data from hr_log.txt
+
+    Verifies the database connection script
+    """
     time_start = dt.today()
     UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
     with open("hr_log.txt", "r+") as f:
@@ -54,8 +56,9 @@ def get_sensor_data():
         f.write(''.join(rest_of_lines))  # Write the rest of the lines to the file
         f.write(first_line)
         red, ir, hr, hr_valid, sp02, sp02_valid = first_line.split(',')
-        #addHRData(UID, date, time, hr)
     return hr, hr_valid, sp02, sp02_valid
+
+
 if __name__ == '__main__':
     main()
 

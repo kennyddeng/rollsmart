@@ -50,7 +50,7 @@ class BoschBNO055():
                    quaternion, gravity,linear_acceleration]
         return imu_val
 
-    def log_values(imu_val):
+    def log_values(self, imu_val):
         """
         log processed sensor data
         """

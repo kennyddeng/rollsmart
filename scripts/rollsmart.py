@@ -1,27 +1,33 @@
 #!/usr/bin/env python
 """
-main device
-roll smart :)
+SYSC4907 Capstone Project Group 33 : RollSmart
+Main entry script for Rollsmart
 """
-import time
-import pyrebase
 import logging
-from rich import print
-from rich.logging import RichHandler
-
 from datetime import datetime as dt
-
-
-import hrcalc
+import fire
+from rich import print as pp
+from rich.logging import RichHandler
+from rich.traceback import install
 from database import Database
-from littelfuse59025020 import Littelfuse59025020
-from maxrefdes_117 import MaxRefDes117
-from bosch_bno055 import BoschBNO055
 from nextionLC import NextionLC
+from bosch_bno055 import BoschBNO055
+from maxrefdes_117 import MaxRefDes117
 from daoki_bf350_3aa import DaokiBF3503AA
+from littelfuse59025020 import Littelfuse59025020
 
+
+# Initialize Rich Traceback
+install()
+DB_UUID = "userLocalID"
 
 class Rollsmart:
+    """
+    Main class which describes Rollsmart Device & dependencies.
+    Initializes connection to all required sensors and database. While running,
+    the script will poll all the sensors and store data in database.
+    """
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """
         Constructs all the necessary attributes for the Rollsmart object.
@@ -29,57 +35,22 @@ class Rollsmart:
         # Enable or disable console output logging
         self.initialize_cli()
 
-        FORMAT = "%(message)s"
+        logging_format = "%(message)s"
         logging.basicConfig(
-            level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+            level="NOTSET", format=logging_format, datefmt="[%X]", handlers=[RichHandler()]
         )
         self.logger = logging.getLogger('Rollsmart')
 
-        # set up sensor Pins and Addresses
-        self.speed_gpio_a = 27
-        self.heart_rate_gpio = 7
-        self.heart_rate_i2c_address = 0x57
-        self.imu_gpio = 1
-        self.imu_i2c_adress = 0x28
-        self.load_cell_dout = 23
-        self.load_cell_sck = 24
-        self.load_cell_reference_value = 100
-        self.strain_left_gpio_a = 1
-        self.strain_left_address = 0x48
-        #self.strain_right_gpio_a = 2
-        #self.strain_right_address = 0x69 # need to update with i2c address
-
-        # set up sensor poll rates (seconds per poll)
-        #self.speed_debounce_time = 0.226 # for max speed 10 km/h
-        self.speed_debounce_time = 1
-        self.heart_rate_poll_rate = 0.75
-        self.imu_poll_rate = 1.2
-        self.load_poll_rate = 1
-        self.strain_poll_rate = 1
-
-        # rollator wheel diameter in metres
-        self.wheel_diameter = 0.2
-
         # database
-        self.db = Database()
+        self.db_ = Database(self.logger)
 
         # connect sensors
         self.connect_sensors()
         self.record_sensor_data()
 
-
-        # db entry and uuid
-        self.db_entry = "collectedData"
-        self.db_uuid = "userLocalId"
-
         # threading
         self.running = True
 
-    def terminate(self):
-        '''
-        Terminate running thread.
-        '''
-        self.running = False
 
     def connect_sensors(self):
         """
@@ -87,18 +58,19 @@ class Rollsmart:
 
         Sensors connected:
             - speed
-            - heart_rate
-            - imu
+            - heart_rate (i2c address = x57, INT = GPIO pin 7)
+            - imu (i2c address = x28)
             - load_cell
             - strain_left
             - strain_right
         """
-        self.speed = Littelfuse59025020(self.speed_gpio_a, self.logger)
+        self.speed = Littelfuse59025020(gpio=27, wheel_diameter=0.2, logger=self.logger)
         self.load_cell = NextionLC()
         self.heart_rate = MaxRefDes117()
-        self.imu = BoschBNO055(self.imu_gpio, self.logger)
-        self.strain_left = DaokiBF3503AA(self.strain_left_gpio_a, self.strain_left_address)
+        self.imu = BoschBNO055(self.logger)
+        self.strain_left = DaokiBF3503AA(gpio=1, address=0x48)
         #self.strain_right = DaokiBF3503AA(self.strain_right_gpio_a, self.strain_right_address)
+
 
     def record_sensor_data(self):
         """
@@ -106,11 +78,11 @@ class Rollsmart:
         """
         while self.running:
             #check time
-            creation_date = datetime.today().strftime('%Y-%m-%d')
-            creation_time = datetime.today().strftime('%H:%M:%S')
+            creation_date = dt.today().strftime('%Y-%m-%d')
+            creation_time = dt.today().strftime('%H:%M:%S')
 
             # check speed sensor
-            speed_val =  self.speed.get_processed_sensor_data()
+            speed_val, speed_interval_counter =  self.speed.get_processed_sensor_data()
             self.logger.log(f' Speed sensor: counter = {speed_interval_counter};'
                              ' value = {speed_val}')
 
@@ -121,7 +93,7 @@ class Rollsmart:
             # check heart rate
             hr_val, hr_valid, sp02, sp02_valid = self.heart_rate.get_processed_sensor_data()
             self.logger.log(f' HeartRate sensor:  HR = {hr_val}; '
-                            'SP02 = {sp02}; valid = {hr_valid}')
+                            f'SP02 = {sp02}; valid = {hr_valid}')
 
             # check imu
             imu_val = self.imu.get_processed_sensor_data()
@@ -134,23 +106,32 @@ class Rollsmart:
             #self.logger.log(f' Strain Guage: RIGHT = {strain_right_val}')
 
             # push sensor data
-            seld.db.add_hr_data(self.db_uuid, creation_date, creation_time, hr_val, sp02)
-            self.db.add_imu_data(self.db_uuid, creation_date, creation_time, imu_val)
-            self.db.add_seat_data(self.db_uuid, creation_date, creation_time, load_cell_val)
-            self.db.add_strain_data(self.db_uuid, creation_date, creation_time, strain_left_val )
-            self.db.add_speed_data(self.db_uuid, creation_date, creation_time, speed_val)
+            self.db_.add_hr_data(DB_UUID, creation_date, creation_time, hr_val, hr_valid)
+            self.db_.add_sp02_data(DB_UUID, creation_date, creation_time, sp02, sp02_valid)
+            self.db_.add_imu_data(DB_UUID, creation_date, creation_time, imu_val)
+            self.db_.add_seat_data(DB_UUID, creation_date, creation_time, load_cell_val)
+            self.db_.add_strain_data(DB_UUID, creation_date, creation_time, strain_left_val)
+            self.db_.add_speed_data(DB_UUID, creation_date, creation_time, speed_val)
+
+
+    def terminate(self):
+        """
+        Terminate Rollsmart activity
+        """
+        self.running = False
 
 
     def initialize_cli(self):
         """
         Prints CLI welcome message
         """
-        print("[deep_sky_blue1 bold]                    _       _                                      _      ")
-        print("[deep_sky_blue1 bold]     _ _    ___     | |     | |     ___    _ __    __ _      _ _   | |_   ")
-        print("[deep_sky_blue1 bold]    | '_|  / _ \    | |     | |    (_-<   | '  \  / _` |    | '_|  |  _|  ")
-        print("[deep_sky_blue1 bold]   _|_|_   \___/   _|_|_   _|_|_   /__/_  |_|_|_| \__,_|   _|_|_   _\__|  ")
-        print('[dark_violet] _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""| ')
-        print("[dark_violet] "'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-')
+        col = 'deep_sky_blue1 bold'
+        pp(f"[{col}]                    _       _                                      _      ")
+        pp(f"[{col}]     _ _    ___     | |     | |     ___    _ __    __ _      _ _   | |_   ")
+        pp(rf"[{col}]    | '_|  / _ \    | |     | |    (_-<   | '  \  / _` |    | '_|  |  _|  ")
+        pp(rf"[{col}]   _|_|_   \___/   _|_|_   _|_|_   /__/_  |_|_|_| \__,_|   _|_|_   _\__|  ")
+        pp(f'[{col}] _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""| ')
+        pp(f"[{col}] "'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-'"'-O-O-')
 
 
 

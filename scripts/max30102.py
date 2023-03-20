@@ -5,10 +5,10 @@ from time import sleep
 
 try:
     import RPi.GPIO as GPIO
+    import smbus
 except ImportError:
     import FakeRPi.GPIO as GPIO
 
-import smbus
 
 # i2c address-es
 # not required?

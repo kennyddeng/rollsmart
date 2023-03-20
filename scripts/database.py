@@ -61,7 +61,7 @@ class Database():
                         self.sqlite_cursor.execute("DELETE FROM sensor_data")
                         self.sqlite_conn.commit()
                         for d in data:
-                            self.db.child(USER_DATA).child(args[0]).child(data[0]).child(data[3]).child(args[2]).set(args[1])
+                            self.db.child(USER_DATA).child(args[0]).child(d[0]).child(d[3]).child(args[2]).set(args[1])
 
                     self.db.child(USER_DATA).child(args[0]).child(sensor).child(args[1]).child(args[2]).set(args[3])
                 else:
@@ -70,6 +70,7 @@ class Database():
             return wrapper
         return push_data_wrapper
 
+
     def push_sqlite(self, sensor, uuid, date, time, value):
         """
         Push to sqlite local database
@@ -77,6 +78,7 @@ class Database():
         self.sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date) VALUES (?, ?, ?, ?)", [sensor, value, time, date])
         self.sqlite_conn.commit()
         self.logger.info('SQLite: Data pushed to local storage')
+
 
     def check_internet_connection(self):
         """
@@ -90,8 +92,9 @@ class Database():
 
         return internet_status
 
+
     @push_data('heartRate')
-    def add_hr_data(self, uuid, date, time, hr):
+    def add_hr_data(self, uuid, date, time, hr, hr_valid):
         """
         Push heart rate data to database
 
@@ -100,11 +103,13 @@ class Database():
             date: date of measurement ('%Y-%m-%d')
             time: time of measurement ('%H:%M:%S')
             hr: heart rate value to push
+            hr_valid (bool): if hr value is valid
         """
-        self.logger.info("DB: Pushed HR data to database")
+        self.logger.info(f"DB: Pushed HR data to database -- HR = {hr}: {hr_valid}")
+
 
     @push_data(SP02_DATA)
-    def add_sp02_data(self, uuid, date, time, sp02):
+    def add_sp02_data(self, uuid, date, time, sp02, sp02_valid):
         """
         Push SP02 data to database
 
@@ -113,8 +118,10 @@ class Database():
             date: date of measurement ('%Y-%m-%d')
             time: time of measurement ('%H:%M:%S')
             sp02: sp02 value to push
+            spo2_valid (bool): if sp02 value is valid
         """
-        self.logger.info("DB: Pushed SP02 data to database")
+        self.logger.info(f"DB: Pushed SP02 data to database -- SPO2 = {sp02}: {sp02_valid}")
+
 
     @push_data(JERK_DATA)
     def add_imu_data(self, uuid, date, time, imu_val):
@@ -130,6 +137,7 @@ class Database():
         """
         self.logger.info("DB: Pushed IMU jerk data to firebase")
 
+
     @push_data(SEAT_DATA)
     def add_seat_data(self, uuid, date, time, seat):
         """
@@ -143,6 +151,7 @@ class Database():
         """
         self.logger.info("DB: Pushed seat data to firebase")
 
+
     @push_data(SPEED_DATA)
     def add_speed_data(self, uuid, date, time, speed):
         """
@@ -155,6 +164,7 @@ class Database():
             seat: seat load cell sensor values to push
         """
         self.logger.info("DB: Pushed speed data to firebase")
+
 
     @push_data(WEIGHT_DIST_DATA)
     def add_strain_data(self, uuid, date, time, side):

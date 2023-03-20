@@ -12,3 +12,6 @@ sudo apt-get install python3-smbus # should already be preinstalled on Raspberry
 
 #Adafruit BNO055
 sudo pip3 install adafruit-circuitpython-bno055
+
+#Fake-RPi for dev
+pip install git+https://github.com/sn4k3/FakeRPi
