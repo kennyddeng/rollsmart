@@ -1,45 +1,45 @@
-"""
-Heart Rate Sensor : MAXREFDES117
-
-VIN --> 3.3V
-SDA --> I2C_SDA1 (pin3; GPIO 2)
-SLC --> I2C_SCL1 (pin5; GPIO 3)
-INT --> (pin7; GPIO 4)
-GND --> GND (pin9)
-
-"""
+#!/usr/bin/env python3
 import max30102
 import hrcalc
 from datetime import datetime as dt
 from datetime import timedelta as td
-from FBdataAdding import *
-
 
 class MaxRefDes117():
-    #def __init__(self, gpioA):
+    """
+    Heart Rate Sensor : MAXREFDES117
+
+    VIN --> 3.3V
+    SDA --> I2C_SDA1 (pin3; GPIO 2)
+    SLC --> I2C_SCL1 (pin5; GPIO 3)
+    INT --> (pin7; GPIO 4)
+    GND --> GND (pin9)
+    """
     def __init__(self):
-        print('Im innit')
-        #self.gpioChannelA = gpioA
         try:
             self.hr = max30102.MAX30102()
         except Exception as e:
             print(e)
 
-
     def get_raw_sensor_data(self):
-        # read sensor data from pins
+        """
+        read sensor data from pins
+        """
         red, ir = self.hr.read_sequential()
         return red, ir
 
     def get_processed_sensor_data(self):
-         # process raw sensor data into something useful to read
+        """
+        process raw sensor data into something useful to read
+        """
         red, ir = self.hr.read_sequential()
         hr, hr_valid, sp02, sp02_valid = hrcalc.calc_hr_and_spo2(ir[:100], red[:100])
         print(f'{hr}:{hr_valid}, {sp02}:{sp02_valid}')
         return hr, hr_valid, sp02, sp02_valid
 
     def get_sensor_data(self):
-        #get sensor data from test file
+        """
+        get sensor data from test file
+        """
         time_start = dt.today()
         UID = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
         with open("hr_log.txt", "r+") as f:
@@ -54,8 +54,9 @@ class MaxRefDes117():
             f.write(''.join(rest_of_lines))  # Write the rest of the lines to the file
             f.write(first_line)
             red, ir, hr, hr_valid, sp02, sp02_valid = first_line.split(',')
-            #addHRData(UID, date, time, hr)
         return hr, hr_valid, sp02, sp02_valid
+
 
 if __name__ == '__main__':
     MaxRefDes117()
+
