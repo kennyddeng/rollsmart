@@ -2,7 +2,11 @@
 """
 Strain Gauge
 """
-import smbus
+try:
+    import smbus
+except:
+    import smbus2 as smbus
+
 
 class DaokiBF3503AA():
     """

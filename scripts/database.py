@@ -38,7 +38,7 @@ class Database():
         self.sqlite_cursor = self.sqlite_conn.cursor()
 
 
-    def push_data(self, sensor):
+    def push_data(sensor):
         """
         Wrapper function which establishes which database is available for data pushing.
         If internet is available, data will be pushed using Firebase ortherwise, data is stored
