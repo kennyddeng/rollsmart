@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: skip-file
 """
 Script which calculates HR from raw data
 

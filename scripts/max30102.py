@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# pylint: skip-file
 from __future__ import print_function
 from time import sleep
 

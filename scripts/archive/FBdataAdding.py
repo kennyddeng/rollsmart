@@ -1,24 +1,11 @@
-########
+# pylint: skip-file
+"""
 # Functions for adding data into Firebase Database
 # Nov.8 2022
 # Corbin G.
-########
-
-
-# import all used libraries
+"""
 import pyrebase
-
-# Create new Firebase config and database object
-config = {
-  'apiKey': "AIzaSyB8YyKlyoarYSiAfS6ZpbmfFHmW5xLIhYg",
-  'authDomain': "sysc4907rollsmart.firebaseapp.com",
-  'databaseURL': "https://sysc4907rollsmart-default-rtdb.firebaseio.com",
-  'projectId': "sysc4907rollsmart",
-  'storageBucket': "sysc4907rollsmart.appspot.com",
-  'messagingSenderId': "937699780579",
-  'appId': "1:937699780579:web:c626a608dc7a2f0b51a2d6",
-  'measurementId': "G-HHFNCNF4NP"
-}
+from dbconfig import config
 
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()

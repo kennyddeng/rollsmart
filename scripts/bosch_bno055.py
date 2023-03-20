@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-import time
+# pylint: disable=invalid-name, logging-fstring-interpolation, broad-exception-caught
+"""
+Script to interface with Bosch BNO0555
+"""
 import board
 import adafruit_bno055
 
@@ -47,7 +50,7 @@ class BoschBNO055():
         gravity = self.imu_sensor.gravity
         linear_accel = self.imu_sensor.linear_acceleration
         imu_val = [temperature, acceleration, magnetic, gyro, euler,
-                   quaternion, gravity,linear_acceleration]
+                   quaternion, gravity,linear_accel]
         return imu_val
 
     def log_values(self, imu_val):
@@ -62,8 +65,3 @@ class BoschBNO055():
         self.logger.log(f"Quaternion: {imu_val[5]}")
         self.logger.log(f"Linear acceleration (m/s^2): {imu_val[6]}")
         self.logger.log(f"Gravity (m/s^2): {imu_val[7]}")
-
-
-if __name__ == '__main__':
-    BoschBNO055()
-

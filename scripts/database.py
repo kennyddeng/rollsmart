@@ -1,12 +1,12 @@
 #!/usr/bin/env python
+# pylint: disable=unused-argument, bare-except, invalid-name, too-many-arguments
 """
 RollSmart Database Interface
 """
-import sqlite3
-import firebase
-import pyrebase
 import functools
-from datetime import datetime as dt
+import sqlite3
+import requests
+import pyrebase
 
 import dbconfig
 
@@ -38,7 +38,7 @@ class Database():
         self.sqlite_cursor = self.sqlite_conn.cursor()
 
 
-    def push_data(sensor):
+    def push_data(self, sensor):
         """
         Wrapper function which establishes which database is available for data pushing.
         If internet is available, data will be pushed using Firebase ortherwise, data is stored
@@ -55,15 +55,18 @@ class Database():
             def wrapper(self, *args, **kwargs):
                 if self.check_internet_connection():
                     # Check for data backlog in local database
-                    if self.sqlite_cursor.execute("SELECT COUNT(*) FROM sensor_data").fetchone()[0] > 0:
-                        data = self.sqlite_cursor.execute("SELECT * FROM sensor_data").fetchall()
+                    backlog_data = self.sqlite_cursor.execute("SELECT COUNT(*) FROM sensor_data")
+                    if backlog_data.fetchone()[0] > 0:
+                        data = backlog_data.fetchall()
                         self.logger.info('DB: Local data backlog uploaded to Fyrebase')
                         self.sqlite_cursor.execute("DELETE FROM sensor_data")
                         self.sqlite_conn.commit()
                         for d in data:
-                            self.db.child(USER_DATA).child(args[0]).child(d[0]).child(d[3]).child(args[2]).set(args[1])
-
-                    self.db.child(USER_DATA).child(args[0]).child(sensor).child(args[1]).child(args[2]).set(args[3])
+                            self.push_firebase(sensor=d[0], uuid=args[0], date=d[3],
+                                               time=args[2], value=d[1])
+                    # push new sensor data
+                    self.push_firebase(sensor=sensor, uuid=args[0], date=args[1],
+                                       time=args[2], value=args[3])
                 else:
                     self.push_sqlite(sensor, args[0], args[1], args[2], args[3])
                 return func(self, *args, **kwargs)
@@ -75,17 +78,29 @@ class Database():
         """
         Push to sqlite local database
         """
-        self.sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date) VALUES (?, ?, ?, ?)", [sensor, value, time, date])
+        self.sqlite_cursor.execute("INSERT INTO sensor_data (sensor_name, value, timestamp, date)"
+                                   " VALUES (?, ?, ?, ?)", [sensor, value, time, date])
         self.sqlite_conn.commit()
         self.logger.info('SQLite: Data pushed to local storage')
 
+    def push_firebase(self, sensor, uuid, date, time, value):
+        """
+        Push to firebase cloud database
+        Args:
+            sensor: sensor name
+            uuid: unique user identifier token
+            date: date of measurement
+            time: time of measurement
+            value: value to be stored
+        """
+        self.db.child(USER_DATA).child(uuid).child(sensor).child(date).child(time).set(value)
 
     def check_internet_connection(self):
         """
         Check internet connection status
         """
         try:
-            requests.get('https://www.google.com')
+            requests.get('https://www.google.com', timeout=5)
             internet_status = True
         except:
             internet_status = False
@@ -105,7 +120,7 @@ class Database():
             hr: heart rate value to push
             hr_valid (bool): if hr value is valid
         """
-        self.logger.info(f"DB: Pushed HR data to database -- HR = {hr}: {hr_valid}")
+        self.logger.info(f"DB PUSH: UUID={uuid} HR = {hr}: {hr_valid}")
 
 
     @push_data(SP02_DATA)
@@ -120,7 +135,7 @@ class Database():
             sp02: sp02 value to push
             spo2_valid (bool): if sp02 value is valid
         """
-        self.logger.info(f"DB: Pushed SP02 data to database -- SPO2 = {sp02}: {sp02_valid}")
+        self.logger.info(f"DB PUSH: UUID={uuid} SP02 = {sp02}: {sp02_valid}")
 
 
     @push_data(JERK_DATA)
@@ -135,7 +150,7 @@ class Database():
             time: time of measurement ('%H:%M:%S')
             imu_val: imu sensor values to push
         """
-        self.logger.info("DB: Pushed IMU jerk data to firebase")
+        self.logger.info(f"DB: Pushed IMU jerk data to firebase :{imu_val[0]}")
 
 
     @push_data(SEAT_DATA)
@@ -179,9 +194,3 @@ class Database():
             seat: seat load cell sensor values to push
         """
         self.logger.info("DB: Pushed strain gauge weight distribution data to firebase")
-
-
-
-if __name__ == '__main__':
-    Database()
-

@@ -1,3 +1,6 @@
+"""
+Firebase database config items
+"""
 config = {
   'apiKey': "AIzaSyB8YyKlyoarYSiAfS6ZpbmfFHmW5xLIhYg",
   'authDomain': "sysc4907rollsmart.firebaseapp.com",

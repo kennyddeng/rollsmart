@@ -1,9 +1,20 @@
+# pylint: disable=import-error
 """
 Strain Gauge
 """
 import smbus
 
 class DaokiBF3503AA():
+    """
+    Class to interface with Daoki BF3503AA Strain gauge.
+
+    These sensors are attached to the handles of the rollator to determine the users
+    weigt distribution while using the device
+
+    Args:
+        gpio: Raspberry Pi GPIO pin
+        address: i2c address for sensor
+    """
     def __init__(self, gpio, address):
         self.gpio_channel_a = gpio
         self.address = address

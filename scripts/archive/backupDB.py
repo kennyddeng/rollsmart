@@ -1,3 +1,4 @@
+# pylint: skip-file
 import sqlite3
 #import firebase_admin
 #from firebase_admin import credentials
@@ -73,7 +74,7 @@ def uploadData(sensor_data):
 	#now = datetime.now()
 	#nowDate =  str(date.today())
 	#nowTime = str(now.strftime("%H:%M:%S"))
-	
+
 	#sensor_data = [('heartRate', random.randint(55,75), nowTime, nowDate)]
 	#uploadData(sensor_data)
 	#ime.sleep(5)

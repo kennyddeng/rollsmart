@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=too-few-public-methods, invalid-name
 """
 Nextion W1802AXWI0728 Module wrapper to simplify rollsmart operations
 """
@@ -33,4 +34,3 @@ class NextionLC():
 
 if __name__ == '__main__':
     NextionLC()
-
