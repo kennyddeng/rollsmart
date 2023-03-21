@@ -66,7 +66,7 @@ class Rollsmart:
         self.speed = Littelfuse59025020(gpio=27, wheel_diameter=0.2, logger=self.logger)
         self.load_cell = NextionLC(logger=self.logger)
         self.heart_rate = MaxRefDes117(i2c_bus=self.i2c_bus, logger=self.logger)
-        self.imu = BoschBNO055(i2c_bus=self.i2c_bus, logger=self.logger)
+        self.imu = BoschBNO055(logger=self.logger)
         self.strain_left = DaokiBF3503AA(i2c_bus=self.i2c_bus, gpio=1,
                                          address=0x48, logger=self.logger)
         #self.strain_right = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)

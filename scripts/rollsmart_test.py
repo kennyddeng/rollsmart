@@ -93,7 +93,7 @@ class RollsmartTest(unittest.TestCase):
         Test connecting to bosch_bno055
         """
         pprint('[bold magenta3] Running test: IMU')
-        imu = BoschBNO055(i2c_bus=self.i2c_bus, logger=self.logger)
+        imu = BoschBNO055(logger=self.logger)
         imu_val = imu.get_processed_sensor_data()
 
 
