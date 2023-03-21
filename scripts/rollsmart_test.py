@@ -37,6 +37,7 @@ class RollsmartTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(RollsmartTest, self).__init__(*args, **kwargs)
         self.logger = init_logger()
+        self.i2c_bus = smbus.SMBus(1)
 
     def test_connect_database(self):
         """
