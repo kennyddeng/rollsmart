@@ -3,12 +3,11 @@
 SYSC4907 Capstone Project Group 33 : RollSmart
 Main entry script for Rollsmart
 """
-import logging
 from datetime import datetime as dt
 import fire
 from rich import print as pp
-from rich.logging import RichHandler
 from rich.traceback import install
+from utils.init_logger import init_logger
 from database import Database
 from nextionLC import NextionLC
 from bosch_bno055 import BoschBNO055
@@ -34,22 +33,20 @@ class Rollsmart:
         """
         # Enable or disable console output logging
         self.initialize_cli()
-
-        logging_format = "%(message)s"
-        logging.basicConfig(
-            level="NOTSET", format=logging_format, datefmt="[%X]", handlers=[RichHandler()]
-        )
-        self.logger = logging.getLogger('Rollsmart')
+        self.logger = init_logger()
 
         # database
         self.db_ = Database(self.logger)
 
         # connect sensors
+        self.logger.info('Initializing sensors')
         self.connect_sensors()
-        self.record_sensor_data()
 
-        # threading
+
+        # start recording sensor data
+        self.logger.info('[bold] Rollsmart is RUNNING')
         self.running = True
+        self.record_sensor_data()
 
 
     def connect_sensors(self):
@@ -65,11 +62,11 @@ class Rollsmart:
             - strain_right
         """
         self.speed = Littelfuse59025020(gpio=27, wheel_diameter=0.2, logger=self.logger)
-        self.load_cell = NextionLC()
-        self.heart_rate = MaxRefDes117()
-        self.imu = BoschBNO055(self.logger)
-        self.strain_left = DaokiBF3503AA(gpio=1, address=0x48)
-        #self.strain_right = DaokiBF3503AA(self.strain_right_gpio_a, self.strain_right_address)
+        self.load_cell = NextionLC(logger=self.logger)
+        self.heart_rate = MaxRefDes117(logger=self.logger)
+        self.imu = BoschBNO055(logger=self.logger)
+        self.strain_left = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
+        #self.strain_right = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
 
 
     def record_sensor_data(self):
@@ -82,18 +79,16 @@ class Rollsmart:
             creation_time = dt.today().strftime('%H:%M:%S')
 
             # check speed sensor
-            speed_val, speed_interval_counter =  self.speed.get_processed_sensor_data()
-            self.logger.log(f' Speed sensor: counter = {speed_interval_counter};'
-                             ' value = {speed_val}')
+            speed_val, _ =  self.speed.get_processed_sensor_data()
+            self.speed.log_value(speed_val)
 
             # check load cell
             load_cell_val = self.load_cell.get_processed_sensor_data()
-            self.logger.log(f' Load cell: value = {load_cell_val}')
+            self.load_cell.log_value(load_cell_val)
 
             # check heart rate
             hr_val, hr_valid, sp02, sp02_valid = self.heart_rate.get_processed_sensor_data()
-            self.logger.log(f' HeartRate sensor:  HR = {hr_val}; '
-                            f'SP02 = {sp02}; valid = {hr_valid}')
+            self.heart_rate.log_value(hr_val, sp02)
 
             # check imu
             imu_val = self.imu.get_processed_sensor_data()
@@ -102,8 +97,8 @@ class Rollsmart:
             # check strain gauges
             strain_left_val = self.strain_left.get_processed_sensor_data()
             #strain_right_val = self.strain_right.get_processed_sensor_data()
-            self.logger.log(f' Strain Guage: LEFT = {strain_left_val}')
-            #self.logger.log(f' Strain Guage: RIGHT = {strain_right_val}')
+            self.strain_left.log_value('left', strain_left_val)
+            #self.strain_right.log_value('right', strain_right_val)
 
             # push sensor data
             self.db_.add_hr_data(DB_UUID, creation_date, creation_time, hr_val, hr_valid)
@@ -119,6 +114,8 @@ class Rollsmart:
         Terminate Rollsmart activity
         """
         self.running = False
+        self.logger.info('[bold] Rollsmart activity terminated')
+
 
 
     def initialize_cli(self):

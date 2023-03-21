@@ -1,4 +1,4 @@
-# pylint: disable=import-error
+# pylint: disable=import-error, bare-except, broad-exception-caught
 """
 Strain Gauge
 """
@@ -19,10 +19,18 @@ class DaokiBF3503AA():
         gpio: Raspberry Pi GPIO pin
         address: i2c address for sensor
     """
-    def __init__(self, gpio, address):
+    def __init__(self, gpio, address, logger):
         self.gpio_channel_a = gpio
         self.address = address
-        self.bus = smbus.SMBus(self.gpio_channel_a)
+        self.logger = logger
+        try:
+            self.bus = smbus.SMBus(self.gpio_channel_a)
+            self.connected = True
+            self.log_value(message='Connected!')
+        except Exception as error:
+            self.connected = False
+            self.log_value(message='Unable to connect to Sensor!')
+            self.log_value(message=error)
 
     def get_raw_sensor_data(self):
         """
@@ -34,5 +42,19 @@ class DaokiBF3503AA():
         """
         process raw sensor data into something useful to read
         """
-        raw = self.get_raw_sensor_data()
-        return raw*10
+        if self.connected:
+            raw = 10*(self.get_raw_sensor_data())
+        else:
+            raw = None
+        return raw
+
+    def log_value(self, side=None, value=None, message=None):
+        """
+        Return Rich formatted logging message for Strain gauge
+        """
+        log_col = '[bold spring_green3]'
+        value_col = '[green]'
+        if message is not None:
+            self.logger.warning(f'{log_col}STRAIN {side} (Daoki)[/]: {value_col}{message}[/]')
+        if side is not None:
+            self.logger.info(f'{log_col}STRAIN {side} (Daoki)[/]: value={value_col}{value}[/]')
