@@ -81,7 +81,7 @@ class RollsmartTest(unittest.TestCase):
         """
         strain_gauge = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
         self.assertIsInstance(strain_gauge, DaokiBF3503AA)
-        self.strain_left.log_value('left', strain_left_val)
+        strain_gauge.log_value('left', strain_left_val)
 
 
 
