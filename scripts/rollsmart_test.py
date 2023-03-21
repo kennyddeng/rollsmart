@@ -4,6 +4,7 @@
 RollSmart Unit Tests
 """
 import unittest
+import smbus
 from datetime import datetime as dt
 from rich import print as pprint
 from rich.traceback import install
@@ -76,23 +77,23 @@ class RollsmartTest(unittest.TestCase):
         self.assertEqual(test_val, stored_val.val())
 
 
-
     def test_hr(self):
         """
         Tests hr data
         """
         pprint('[bold magenta3] Running test: HeartRate & SP02')
-        heart_rate = MaxRefDes117(self.logger)
+        heart_rate = MaxRefDes117(i2c_bus=self.i2c_bus, self.logger)
         hr_val, hr_valid, sp02, sp02_valid = heart_rate.get_processed_sensor_data()
         heart_rate.log_value(hr_val, sp02)
         self.assertIsInstance(heart_rate, MaxRefDes117)
+
 
     def test_imu(self):
         """
         Test connecting to bosch_bno055
         """
         pprint('[bold magenta3] Running test: IMU')
-        imu = BoschBNO055(logger=self.logger)
+        imu = BoschBNO055(i2c_bus=self.i2c_bus, logger=self.logger)
         imu_val = imu.get_processed_sensor_data()
 
 
@@ -102,7 +103,8 @@ class RollsmartTest(unittest.TestCase):
         Test strain gauge
         """
         pprint('[bold magenta3] Running test: HeartRate & SP02')
-        strain_gauge = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
+        strain_gauge = DaokiBF3503AA(i2c_bus=self.i2c_bus,
+                                     gpio=1, address=0x48, logger=self.logger)
         strain_left_val = strain_gauge.get_processed_sensor_data()
         self.assertIsInstance(strain_gauge, DaokiBF3503AA)
         strain_gauge.log_value('left', strain_left_val)
