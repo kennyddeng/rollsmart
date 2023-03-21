@@ -11,6 +11,11 @@ from rich.traceback import install
 from utils.init_logger import init_logger
 from database import Database
 from test_dbconfig import config
+from nextionLC import NextionLC
+from bosch_bno055 import BoschBNO055
+from maxrefdes_117 import MaxRefDes117
+from daoki_bf350_3aa import DaokiBF3503AA
+from littelfuse59025020 import Littelfuse59025020
 
 install()
 
@@ -68,6 +73,16 @@ class RollsmartTest(unittest.TestCase):
         Tests hr data
         """
         pprint('[bold magenta3] Running test: HeartRate & SP02')
+
+
+    def test_strain_gauge(self):
+        """
+        Test strain gauge
+        """
+        strain_gauge = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
+        self.assertIsInstance(strain_gauge, DaokiBF3503AA)
+        self.strain_left.log_value('left', strain_left_val)
+
 
 
 
