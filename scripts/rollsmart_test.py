@@ -73,12 +73,26 @@ class RollsmartTest(unittest.TestCase):
         Tests hr data
         """
         pprint('[bold magenta3] Running test: HeartRate & SP02')
+        heart_rate = MaxRefDes117(self.logger)
+        hr_val, hr_valid, sp02, sp02_valid = heart_rate.get_processed_sensor_data()
+        heart_rate.log_value(hr_val, sp02)
+        self.assertIsInstance(heart_rate, MaxRefDes117)
+
+    def test_imu(self):
+        """
+        Test connecting to bosch_bno055
+        """
+        pprint('[bold magenta3] Running test: IMU')
+        imu = BoschBNO055(logger=self.logger)
+        imu_val = imu.get_processed_sensor_data()
+
 
 
     def test_strain_gauge(self):
         """
         Test strain gauge
         """
+        pprint('[bold magenta3] Running test: HeartRate & SP02')
         strain_gauge = DaokiBF3503AA(gpio=1, address=0x48, logger=self.logger)
         strain_left_val = strain_gauge.get_processed_sensor_data()
         self.assertIsInstance(strain_gauge, DaokiBF3503AA)
