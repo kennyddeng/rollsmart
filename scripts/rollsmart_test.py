@@ -9,6 +9,7 @@ from rich import print as pprint
 from rich.traceback import install
 
 from utils.init_logger import init_logger
+from utils.i2c_detect import i2c_detect
 from database import Database
 from test_dbconfig import config
 from nextionLC import NextionLC
@@ -49,6 +50,14 @@ class RollsmartTest(unittest.TestCase):
         with self.assertRaises(Exception):
             database = Database(self.logger, config=config)
 
+    def test_connected_sensors(self):
+        """
+        Test if sensors are actually connected
+        """
+        sensors = i2c_detect()
+        self.assertIsTrue(0x28 in sensors)
+        self.assertIsTrue(0x57 in sensors)
+        self.assertIsTrue(0x47 in sensors)
 
 
     def test_database_upload(self):
