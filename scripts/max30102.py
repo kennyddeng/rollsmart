@@ -59,7 +59,7 @@ class MAX30102():
         self.interrupt = gpio_pin
 
         # set gpio mode
-        GPIO.setmode(GPIO.BOARD)
+        #GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.interrupt, GPIO.IN)
 
         self.reset()
