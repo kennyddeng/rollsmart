@@ -9,6 +9,7 @@ def i2c_detect():
     Establish connection to i2c_bus on pi, attempt to connect to each address
     Returns a list of addresses which have a device
     """
+    pi = pigpio.pi() # connect to local Pi
     connected_devices = []
     for device in range(128):
         h = pi.i2c_open(1, device)
