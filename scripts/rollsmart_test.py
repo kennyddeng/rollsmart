@@ -82,7 +82,7 @@ class RollsmartTest(unittest.TestCase):
         Tests hr data
         """
         pprint('[bold magenta3] Running test: HeartRate & SP02')
-        heart_rate = MaxRefDes117(i2c_bus=self.i2c_bus, self.logger)
+        heart_rate = MaxRefDes117(i2c_bus=self.i2c_bus, logger=self.logger)
         hr_val, hr_valid, sp02, sp02_valid = heart_rate.get_processed_sensor_data()
         heart_rate.log_value(hr_val, sp02)
         self.assertIsInstance(heart_rate, MaxRefDes117)
