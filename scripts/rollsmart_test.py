@@ -64,13 +64,12 @@ class RollsmartTest(unittest.TestCase):
         Tests uploading data to database
         """
         pprint('[bold magenta3] Running test: Database upload')
-        date = dt.today().strftime('%Y-%m-%d')
-        time = dt.today().strftime('%H:%M:%S')
+        date = dt.today()
 
         db = Database(self.logger)
         uuid = "4nIlD4s8Jdc2Uoa1q0DeONmmisH2"
         test_val = 80
-        db.add_hr_data(uuid, date, time, test_val, False)
+        db.add_hr_data(uuid, date, test_val, False)
         stored_val = db.db.child(USER_DATA).child(uuid).child(HR_DATA).child(date).child(time).get()
         self.assertEqual(test_val, stored_val.val())
 

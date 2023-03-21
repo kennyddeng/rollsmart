@@ -3,7 +3,10 @@
 SYSC4907 Capstone Project Group 33 : RollSmart
 Main entry script for Rollsmart
 """
-import smbus
+try:
+    import smbus
+except:
+    import smbus2 as smbus
 from datetime import datetime as dt
 import fire
 from rich import print as pp
@@ -78,8 +81,9 @@ class Rollsmart:
         """
         while self.running:
             #check time
-            creation_date = dt.today().strftime('%Y-%m-%d')
-            creation_time = dt.today().strftime('%H:%M:%S')
+            creation_date = dt.today()
+            #creation_date = dt.today().strftime('%Y-%m-%d')
+            #creation_time = dt.today().strftime('%H:%M:%S')
 
             # check speed sensor
             speed_val, _ =  self.speed.get_processed_sensor_data()
@@ -103,13 +107,15 @@ class Rollsmart:
             self.strain_left.log_value('left', strain_left_val)
             #self.strain_right.log_value('right', strain_right_val)
 
+
+            measurement_counter += 1
             # push sensor data
-            self.db_.add_hr_data(DB_UUID, creation_date, creation_time, hr_val, hr_valid)
-            self.db_.add_sp02_data(DB_UUID, creation_date, creation_time, sp02, sp02_valid)
-            self.db_.add_imu_data(DB_UUID, creation_date, creation_time, imu_val)
-            self.db_.add_seat_data(DB_UUID, creation_date, creation_time, load_cell_val)
-            self.db_.add_strain_data(DB_UUID, creation_date, creation_time, strain_left_val)
-            self.db_.add_speed_data(DB_UUID, creation_date, creation_time, speed_val)
+            self.db_.add_hr_data(DB_UUID, creation_date, hr_val, hr_valid)
+            self.db_.add_sp02_data(DB_UUID, creation_date , sp02, sp02_valid)
+            self.db_.add_imu_data(DB_UUID, creation_date,  imu_val)
+            self.db_.add_seat_data(DB_UUID, creation_date,  load_cell_val)
+            self.db_.add_strain_data(DB_UUID, creation_date,  strain_left_val)
+            self.db_.add_speed_data(DB_UUID, creation_date,  speed_val)
 
 
     def terminate(self):

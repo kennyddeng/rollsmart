@@ -56,8 +56,10 @@ class Database():
                 try:
                     self.check_internet_connection()
                     # push new sensor data
-                    self.push_firebase(sensor=sensor, uuid=args[0], date=args[1],
-                                       time=args[2], value=args[3])
+                    date = args[1].strftime('%Y-%m-%d')
+                    time = args[1].strftime('%H:%M:%S')
+                    self.push_firebase(sensor=sensor, uuid=args[0], date=date,
+                                       time=time, value=args[3])
 
                     # check for data backlog in local database
                     backlog_data = self.sqlite_cursor.execute("SELECT COUNT(*) FROM sensor_data")
@@ -68,9 +70,9 @@ class Database():
                         self.sqlite_conn.commit()
                         for d in data:
                             self.push_firebase(sensor=d[0], uuid=args[0], date=d[3],
-                                               time=args[2], value=d[1])
+                                               time=d[2], value=d[1])
                 except ConnectionError:
-                    self.push_sqlite(sensor, args[0], args[1], args[2], args[3])
+                    self.push_sqlite(sensor, args[0], date, time, args[3])
 
                 return func(self, *args, **kwargs)
             return wrapper
@@ -112,7 +114,7 @@ class Database():
 
 
     @push_data('heartRate')
-    def add_hr_data(self, uuid, date, time, hr, hr_valid):
+    def add_hr_data(self, uuid, date, hr, hr_valid):
         """
         Push heart rate data to database
 
@@ -126,7 +128,7 @@ class Database():
 
 
     @push_data('sp02')
-    def add_sp02_data(self, uuid, date, time, sp02, sp02_valid):
+    def add_sp02_data(self, uuid, date, sp02, sp02_valid):
         """
         Push SP02 data to database
 
@@ -140,7 +142,7 @@ class Database():
 
 
     @push_data('jerk')
-    def add_imu_data(self, uuid, date, time, imu_val):
+    def add_imu_data(self, uuid, date, imu_val):
         """
         Push imu data to database
         "JERK"
@@ -154,7 +156,7 @@ class Database():
 
 
     @push_data('seat')
-    def add_seat_data(self, uuid, date, time, seat):
+    def add_seat_data(self, uuid, date, seat):
         """
         Push seat load cell data to database
 
@@ -167,7 +169,7 @@ class Database():
 
 
     @push_data('speed')
-    def add_speed_data(self, uuid, date, time, speed):
+    def add_speed_data(self, uuid, date, speed):
         """
         Push speed data to database
 
@@ -180,7 +182,7 @@ class Database():
 
 
     @push_data('weightDistribution')
-    def add_strain_data(self, uuid, date, time, side):
+    def add_strain_data(self, uuid, date, side):
         """
         Push handlebar strain gauge data to database
 
