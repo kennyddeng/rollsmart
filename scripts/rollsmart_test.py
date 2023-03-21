@@ -56,9 +56,9 @@ class RollsmartTest(unittest.TestCase):
         Test if sensors are actually connected
         """
         sensors = i2c_detect()
-        self.assertTrue(0x28 in sensors)
-        self.assertTrue(0x57 in sensors)
-        self.assertTrue(0x48 in sensors)
+        self.assertTrue('0x28' in sensors)
+        self.assertTrue('0x57' in sensors)
+        self.assertTrue('0x48' in sensors)
 
 
     def test_database_upload(self):
