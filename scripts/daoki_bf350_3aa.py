@@ -19,12 +19,13 @@ class DaokiBF3503AA():
         gpio: Raspberry Pi GPIO pin
         address: i2c address for sensor
     """
-    def __init__(self, gpio, address, logger):
+    def __init__(self, i2c_bus, gpio, address, logger):
         self.gpio_channel_a = gpio
+        self.i2c_bus = i2c_bus
         self.address = address
         self.logger = logger
         try:
-            self.bus = smbus.SMBus(self.gpio_channel_a)
+            self.get_raw_sensor_data()
             self.connected = True
             self.log_value(message='Connected!')
         except Exception as error:
@@ -36,7 +37,7 @@ class DaokiBF3503AA():
         """
         read sensor data from pins
         """
-        return self.bus.read_byte(self.address)
+        return self.i2c_bus.read_byte(self.address)
 
     def get_processed_sensor_data(self):
         """

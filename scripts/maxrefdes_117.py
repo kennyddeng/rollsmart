@@ -18,10 +18,11 @@ class MaxRefDes117():
     INT --> (pin7; GPIO 4)
     GND --> GND (pin9)
     """
-    def __init__(self, logger):
+    def __init__(self, i2c_bus, logger):
         self.logger = logger or init_logger()
         try:
-            self.hr = max30102.MAX30102()
+            self.i2c_bus = i2c_bus
+            self.hr = max30102.MAX30102(i2c_bus=self.i2c_bus)
             self.connected = True
             self.log_value(message='Connected!')
         except Exception as e:

@@ -86,6 +86,7 @@ class Database():
         self.sqlite_conn.commit()
         self.logger.info(f'[bold]DB (SQLite) - {sensor}: Pushed {value}')
 
+
     def push_firebase(self, sensor, uuid, date, time, value):
         """
         Push to firebase cloud database
@@ -98,6 +99,7 @@ class Database():
         """
         self.db.child(USER_DATA).child(uuid).child(sensor).child(date).child(time).set(value)
         self.logger.info(f'[bold]DB (Firebase) - {sensor}[/]: Pushed {value}')
+
 
     def check_internet_connection(self):
         """
