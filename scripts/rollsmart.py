@@ -82,8 +82,6 @@ class Rollsmart:
         while self.running:
             #check time
             creation_date = dt.today()
-            #creation_date = dt.today().strftime('%Y-%m-%d')
-            #creation_time = dt.today().strftime('%H:%M:%S')
 
             # check speed sensor
             speed_val, _ =  self.speed.get_processed_sensor_data()
