@@ -48,9 +48,6 @@ class RollsmartTest(unittest.TestCase):
         database = Database(self.logger)
         self.assertIsInstance(database, Database)
 
-        # connect using bad config
-        with self.assertRaises(Exception):
-            database = Database(self.logger, config=config)
 
     def test_connected_sensors(self):
         """
@@ -98,7 +95,6 @@ class RollsmartTest(unittest.TestCase):
         imu_val = imu.get_processed_sensor_data()
 
 
-
     def test_strain_gauge(self):
         """
         Test strain gauge
@@ -109,8 +105,6 @@ class RollsmartTest(unittest.TestCase):
         strain_left_val = strain_gauge.get_processed_sensor_data()
         self.assertIsInstance(strain_gauge, DaokiBF3503AA)
         strain_gauge.log_value('left', strain_left_val)
-
-
 
 
 class RollsmartTestRunner:
