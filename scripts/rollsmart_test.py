@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-# pylint: disable=super-with-arguments, too-few-public-methods, invalid-name
+# pylint: disable=super-with-arguments, too-few-public-methods, invalid-name,
 """
 RollSmart Unit Tests
 """
 import unittest
-import smbus
+try:
+    import smbus
+except:
+    import smbus2 as smbus
 from datetime import datetime as dt
 from rich import print as pprint
 from rich.traceback import install
@@ -105,6 +108,14 @@ class RollsmartTest(unittest.TestCase):
         self.assertIsInstance(strain_gauge, DaokiBF3503AA)
         strain_gauge.log_value('left', strain_left_val)
 
+    def test_loadcell(self):
+        """
+        Test load cell
+        """
+        pprint('[bold magenta3] Running test: Load Cell')
+        load_cell = NextionLC(logger=self.logger)
+        load_cell_val = load_cell.get_processed_sensor_data()
+        load_cell.log_value(load_cell_val)
 
 class RollsmartTestRunner:
     """
