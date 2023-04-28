@@ -1,2 +1,2 @@
-This is the github repository for 4th year captsone project : ROLLSMART
+This is the github repository for the 4th year capstone project : ROLLSMART
 
